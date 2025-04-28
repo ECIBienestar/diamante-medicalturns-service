@@ -205,7 +205,7 @@ Puedes consumir el API ya desplegado accediendo a su documentación en línea:
 
 - **Swagger en Azure:**
 ```
-https://<tu_proyecto>.azurewebsites.net/swagger-ui.html
+https://back-medicalturns-develop-aycucpewbafjhce5.mexicocentral-01.azurewebsites.net/swagger-ui.html
 ```
 
 Este endpoint se encuentra protegido por autenticación JWT, por lo que deberás obtener un token desde el **Auth Service** antes de realizar peticiones.
@@ -222,7 +222,7 @@ A continuación, se muestra un ejemplo básico de cómo consumir el endpoint `GE
 
 ```ts
 // src/api.ts
-export const API_URL = 'https://<tu_proyecto>.azurewebsites.net';
+export const API_URL = 'https://back-medicalturns-develop-aycucpewbafjhce5.mexicocentral-01.azurewebsites.net/';
 
 export const fetchWithToken = async (endpoint: string, token: string, options?: RequestInit) => {
   const res = await fetch(`${API_URL}${endpoint}`, {
@@ -271,7 +271,7 @@ export const crearTurno = (token: string, turnoData: any) => {
 
 - El proyecto se encuentra desplegado en Azure.
 - Acceso a la API mediante Swagger:  
-  👉 [Ver en Azure](https://<tu_proyecto>.azurewebsites.net/swagger-ui.html)
+  👉 [Ver en Azure](https://back-medicalturns-develop-aycucpewbafjhce5.mexicocentral-01.azurewebsites.net/swagger-ui.html)
 - Pipelines configurados:
   - GitHub Actions para pruebas y builds
   - Azure Pipelines para despliegue automático
