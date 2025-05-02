@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
+
 @Data
 @Entity
 @Table(name = "multimedia")
@@ -27,7 +28,8 @@ public class Multimedia {
     private String url;
 
     private int duration;
-    
+    public Multimedia() {   
+    }
     public Multimedia(TypeEnum type, String name, String url, int duration) {
         this.type = type;
         this.name = name;
