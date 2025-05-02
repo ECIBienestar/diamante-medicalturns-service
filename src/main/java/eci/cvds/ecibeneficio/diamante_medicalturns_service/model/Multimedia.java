@@ -27,5 +27,11 @@ public class Multimedia {
     private String url;
 
     private int duration;
-
+    
+    public Multimedia(TypeEnum type, String name, String url, int duration) {
+        this.type = type;
+        this.name = name;
+        this.url = url;
+        this.duration = duration;
+    }
 }
