@@ -1,23 +1,25 @@
 package eci.cvds.ecibeneficio.diamante_medicalturns_service.service;
 
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateTurnRequest;
-import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.TurnResponse;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Turn;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.SpecialityEnum;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.StatusEnum;
 import java.util.List;
 
 public interface TurnService {
-  TurnResponse createTurn(CreateTurnRequest turn);
+  Turn createTurn(CreateTurnRequest turn);
 
-  List<TurnResponse> getTurns();
+  List<Turn> getTurns();
 
-  List<TurnResponse> getTurns(SpecialityEnum speciality);
+  List<Turn> getTurns(SpecialityEnum speciality);
 
-  TurnResponse getTurn(Long id);
+  Turn getTurn(Long id);
 
-  TurnResponse getCurrentTurn(SpecialityEnum speciality);
+  Turn getCurrentTurn(SpecialityEnum speciality);
 
-  void setStatus(Long id, StatusEnum status);
+  Turn getLastTurn(SpecialityEnum speciality);
 
-  void setLevelAttention(Long id, int levelAttention);
+  void updateStatus(Long id, StatusEnum status);
+
+  void updateLevelAttention(Long id, int levelAttention);
 }

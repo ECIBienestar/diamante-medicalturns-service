@@ -2,7 +2,6 @@ package eci.cvds.ecibeneficio.diamante_medicalturns_service.service.impl;
 
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateTurnRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateUserRequest;
-import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.TurnResponse;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.exception.MedicalTurnsException;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Turn;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.User;
@@ -12,7 +11,6 @@ import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.TurnService;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.UserService;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.SpecialityEnum;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.StatusEnum;
-import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.mapper.TurnMapper;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,58 +26,66 @@ public class TurnServiceImpl implements TurnService {
   private final SpecialitySequenceService specialitySequenceService;
 
   @Override
-  public TurnResponse createTurn(CreateTurnRequest turn) {
+  public Turn createTurn(CreateTurnRequest turn) {
+    var timeRange = getTodayTimeRange();
     User user = ensureUserExists(turn.getUser());
+
+    if (turnRepository.findUserCurrrentTurn(timeRange.start, timeRange.end, user.getId()).isPresent()) {
+      throw new MedicalTurnsException(MedicalTurnsException.USER_HAVE_TURN);
+    }
 
     Turn newTurn =
         new Turn(user, createCode(turn.getSpeciality()), turn.getSpeciality(), LocalDateTime.now());
     if (turn.getPriority() != null) newTurn.setPriority(turn.getPriority());
 
-    turnRepository.save(newTurn);
-
-    return TurnMapper.toResponse(newTurn);
+    return turnRepository.save(newTurn);
   }
 
   @Override
-  public List<TurnResponse> getTurns() {
+  public List<Turn> getTurns() {
     var timeRange = getTodayTimeRange();
-    List<Turn> turns = turnRepository.findTurnsForToday(timeRange.start, timeRange.end, null);
 
-    return mapToResponse(turns);
+    return turnRepository.findTurnsForToday(timeRange.start, timeRange.end, null);
   }
 
   @Override
-  public List<TurnResponse> getTurns(SpecialityEnum speciality) {
+  public List<Turn> getTurns(SpecialityEnum speciality) {
     var timeRange = getTodayTimeRange();
-    List<Turn> turns = turnRepository.findTurnsForToday(timeRange.start, timeRange.end, speciality);
 
-    return mapToResponse(turns);
+    return turnRepository.findTurnsForToday(timeRange.start, timeRange.end, speciality);
   }
 
   @Override
-  public TurnResponse getTurn(Long id) {
-    return TurnMapper.toResponse(findTurn(id));
+  public Turn getTurn(Long id) {
+    return turnRepository
+        .findById(id)
+        .orElseThrow(() -> new MedicalTurnsException(MedicalTurnsException.TURN_NOT_FOUND));
   }
 
   @Override
-  public TurnResponse getCurrentTurn(SpecialityEnum speciality) {
-    Optional<Turn> turn = turnRepository.findCurrentTurn(StatusEnum.CURRENT, speciality);
+  public Turn getCurrentTurn(SpecialityEnum speciality) {
+    var timeRange = getTodayTimeRange();
+    Optional<Turn> turn = turnRepository.findCurrentTurn(timeRange.start, timeRange.end, speciality);
 
-    if (turn.isEmpty()) throw new MedicalTurnsException(MedicalTurnsException.TURN_NOT_FOUND);
-
-    return TurnMapper.toResponse(turn.get());
+    return turn.orElse(null);
   }
 
   @Override
-  public void setStatus(Long id, StatusEnum status) {
-    Turn turn = findTurn(id);
+  public Turn getLastTurn(SpecialityEnum speciality) {
+    var timeRange = getTodayTimeRange();
+    return turnRepository.findTurnsForToday(timeRange.start, timeRange.end, speciality).stream().findFirst().orElse(null);
+  }
+
+  @Override
+  public void updateStatus(Long id, StatusEnum status) {
+    Turn turn = getTurn(id);
     turn.setStatus(status);
     turnRepository.save(turn);
   }
 
   @Override
-  public void setLevelAttention(Long id, int levelAttention) {
-    Turn turn = findTurn(id);
+  public void updateLevelAttention(Long id, int levelAttention) {
+    Turn turn = getTurn(id);
     turn.setLevelAttention(levelAttention);
     turnRepository.save(turn);
   }
@@ -110,15 +116,5 @@ public class TurnServiceImpl implements TurnService {
     LocalDate today = LocalDate.now();
 
     return new TimeRange(today.atStartOfDay(), today.atTime(23, 59, 59));
-  }
-
-  private List<TurnResponse> mapToResponse(List<Turn> turns) {
-    return turns.stream().map(TurnMapper::toResponse).toList();
-  }
-
-  private Turn findTurn(Long id) {
-    return turnRepository
-        .findById(id)
-        .orElseThrow(() -> new MedicalTurnsException(MedicalTurnsException.TURN_NOT_FOUND));
   }
 }
