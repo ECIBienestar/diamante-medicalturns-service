@@ -14,5 +14,5 @@ public class SpecialitySequence {
   @Enumerated(EnumType.STRING)
   private SpecialityEnum speciality;
 
-  private String sequence;
+  private int sequence;
 }
