@@ -14,11 +14,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UniversityWelfare {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  @Id private int id;
 
-  private boolean disableTurns;
+  @OneToOne
+  @JoinColumn(name = "turn_id")
+  private Turn lastTurn;
+
+  private boolean disableTurns = false;
 
   @ElementCollection(targetClass = SpecialityEnum.class)
   @Enumerated(EnumType.STRING)
@@ -27,6 +29,10 @@ public class UniversityWelfare {
       joinColumns = @JoinColumn(name = "university_welfare_id"))
   @Column(name = "speciality")
   private List<SpecialityEnum> disbaleTurnsBySpeciality = new ArrayList<SpecialityEnum>();
+
+  public UniversityWelfare(int id) {
+    this.id = id;
+  }
 
   public void disableTurns(SpecialityEnum speciality) {
     disbaleTurnsBySpeciality.add(speciality);
