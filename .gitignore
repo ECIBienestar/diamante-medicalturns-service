@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Environment configuration files ###
+.env
+
+### Word docs ###
+*.doc
+*.docx
