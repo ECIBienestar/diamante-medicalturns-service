@@ -32,9 +32,10 @@ public class Turn {
   private StatusEnum status = StatusEnum.PENDING;
   private int levelAttention;
 
-  public Turn(SpecialityEnum speciality, PriorityEnum priority, LocalDateTime date) {
+  public Turn(User user, String code, SpecialityEnum speciality, LocalDateTime date) {
+    this.user = user;
+    this.code = code;
     this.speciality = speciality;
-    this.priority = priority;
     this.date = date;
   }
 }
