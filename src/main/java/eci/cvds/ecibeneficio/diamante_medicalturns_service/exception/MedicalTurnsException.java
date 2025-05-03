@@ -11,6 +11,7 @@ public class MedicalTurnsException extends RuntimeException {
   // ─── Turn ───
   public static final String TURNS_DISABLED = "Turns are disabled";
   public static final String TURN_NOT_FOUND = "Turn not found";
+  public static final String TURNS_ALREADY_DISABLED = "All turns are already disabled";
 
   public MedicalTurnsException(String message) {
     super(message);
