@@ -4,6 +4,7 @@ import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateTur
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.TurnResponse;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.SpecialityEnum;
 import java.util.List;
+import java.util.Optional;
 
 public interface UniversityWelfareService {
   TurnResponse addTurn(CreateTurnRequest turn);
@@ -12,13 +13,14 @@ public interface UniversityWelfareService {
 
   List<TurnResponse> getTurns(SpecialityEnum speciality);
 
-  TurnResponse getLastTurn();
+  Optional<TurnResponse> getCurrentTurn();
 
-  TurnResponse getLastTurn(SpecialityEnum speciality);
+  Optional<TurnResponse> getCurrentTurn(SpecialityEnum speciality);
 
-  TurnResponse callNextTurn(SpecialityEnum speciality, int levelAttention);
+  TurnResponse callNextTurn(String doctorId, SpecialityEnum speciality, int levelAttention);
 
-  TurnResponse callNextTurn(Long nextTurn, SpecialityEnum speciality, int levelAttention);
+  TurnResponse callNextTurn(
+      String doctorId, Long nextTurn, SpecialityEnum speciality, int levelAttention);
 
   void disableTurns();
 

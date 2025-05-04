@@ -3,6 +3,7 @@ package eci.cvds.ecibeneficio.diamante_medicalturns_service.service.impl;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateTurnRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateUserRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.exception.MedicalTurnsException;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Doctor;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Turn;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.User;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.TurnRepository;
@@ -30,7 +31,9 @@ public class TurnServiceImpl implements TurnService {
     var timeRange = getTodayTimeRange();
     User user = ensureUserExists(turn.getUser());
 
-    if (turnRepository.findUserCurrrentTurn(timeRange.start, timeRange.end, user.getId()).isPresent()) {
+    if (turnRepository
+        .findUserCurrrentTurn(timeRange.start, timeRange.end, user.getId())
+        .isPresent()) {
       throw new MedicalTurnsException(MedicalTurnsException.USER_HAVE_TURN);
     }
 
@@ -63,17 +66,17 @@ public class TurnServiceImpl implements TurnService {
   }
 
   @Override
-  public Turn getCurrentTurn(SpecialityEnum speciality) {
+  public Optional<Turn> getCurrentTurn(SpecialityEnum speciality) {
     var timeRange = getTodayTimeRange();
-    Optional<Turn> turn = turnRepository.findCurrentTurn(timeRange.start, timeRange.end, speciality);
 
-    return turn.orElse(null);
+    return turnRepository.findCurrentTurn(timeRange.start, timeRange.end, speciality); //
   }
 
   @Override
-  public Turn getLastTurn(SpecialityEnum speciality) {
+  public Optional<Turn> getLastTurn(SpecialityEnum speciality) {
     var timeRange = getTodayTimeRange();
-    return turnRepository.findTurnsForToday(timeRange.start, timeRange.end, speciality).stream().findFirst().orElse(null);
+    return turnRepository.findTurnsForToday(timeRange.start, timeRange.end, speciality).stream()
+        .findFirst();
   }
 
   @Override
@@ -87,6 +90,13 @@ public class TurnServiceImpl implements TurnService {
   public void updateLevelAttention(Long id, int levelAttention) {
     Turn turn = getTurn(id);
     turn.setLevelAttention(levelAttention);
+    turnRepository.save(turn);
+  }
+
+  @Override
+  public void updateDoctor(Long turnId, Doctor doctor) {
+    Turn turn = getTurn(turnId);
+    turn.setDoctor(doctor);
     turnRepository.save(turn);
   }
 
