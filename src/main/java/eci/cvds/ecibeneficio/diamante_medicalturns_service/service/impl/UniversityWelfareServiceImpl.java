@@ -3,15 +3,18 @@ package eci.cvds.ecibeneficio.diamante_medicalturns_service.service.impl;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateTurnRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.TurnResponse;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.exception.MedicalTurnsException;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Doctor;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Turn;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.UniversityWelfare;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.UniversityWelfareRepository;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.TurnService;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.UniversityWelfareService;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.UserService;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.SpecialityEnum;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.StatusEnum;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.mapper.TurnMapper;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Service;
 public class UniversityWelfareServiceImpl implements UniversityWelfareService {
   private final UniversityWelfareRepository universityWelfareRepository;
   private final TurnService turnService;
+  private final UserService userService;
 
   @Override
   public TurnResponse addTurn(CreateTurnRequest turn) {
@@ -45,30 +49,43 @@ public class UniversityWelfareServiceImpl implements UniversityWelfareService {
   }
 
   @Override
-  public TurnResponse getLastTurn() {
-    return TurnMapper.toResponse(universityWelfareRepository.getUniversityWelfare().getLastTurn());
+  public Optional<TurnResponse> getCurrentTurn() {
+    return Optional.ofNullable(universityWelfareRepository.getUniversityWelfare().getLastTurn())
+        .map(TurnMapper::toResponse);
   }
 
   @Override
-  public TurnResponse getLastTurn(SpecialityEnum speciality) {
-    return TurnMapper.toResponse(turnService.getCurrentTurn(speciality));
+  public Optional<TurnResponse> getCurrentTurn(SpecialityEnum speciality) {
+    return turnService.getCurrentTurn(speciality).map(TurnMapper::toResponse);
   }
 
   @Override
-  public TurnResponse callNextTurn(SpecialityEnum speciality, int levelAttention) {
-    finishTurn(speciality, levelAttention);
+  public TurnResponse callNextTurn(String doctorId, SpecialityEnum speciality, int levelAttention) {
+    Doctor doctor = getDoctor(doctorId);
 
-    Turn nextTurn = turnService.getLastTurn(speciality);
+    finishTurn(speciality, levelAttention, doctor);
+
+    Turn nextTurn =
+        turnService
+            .getLastTurn(speciality)
+            .orElseThrow(() -> new MedicalTurnsException(MedicalTurnsException.LAST_TURN));
+
     startTurn(nextTurn);
-
     return TurnMapper.toResponse(nextTurn);
   }
 
   @Override
-  public TurnResponse callNextTurn(Long id, SpecialityEnum speciality, int levelAttention) {
-    finishTurn(speciality, levelAttention);
+  public TurnResponse callNextTurn(
+      String doctorId, Long nextTurnId, SpecialityEnum speciality, int levelAttention) {
+    Doctor doctor = getDoctor(doctorId);
 
-    Turn nextTurn = turnService.getTurn(id);
+    finishTurn(speciality, levelAttention, doctor);
+
+    Turn nextTurn = turnService.getTurn(nextTurnId);
+
+    if (!nextTurn.getStatus().equals(StatusEnum.PENDING))
+      throw new MedicalTurnsException(MedicalTurnsException.TURN_COMPLETED);
+
     startTurn(nextTurn);
 
     return TurnMapper.toResponse(nextTurn);
@@ -121,14 +138,27 @@ public class UniversityWelfareServiceImpl implements UniversityWelfareService {
     return turns.stream().map(TurnMapper::toResponse).toList();
   }
 
-  private void finishTurn(SpecialityEnum speciality, int levelAttention) {
-    Turn currentTurn = turnService.getCurrentTurn(speciality);
-    turnService.updateStatus(currentTurn.getId(), StatusEnum.COMPLETED);
-    turnService.updateLevelAttention(currentTurn.getId(), levelAttention);
+  private Doctor getDoctor(String id) {
+    return (Doctor)
+        userService
+            .getUser(id)
+            .orElseThrow(() -> new MedicalTurnsException(MedicalTurnsException.USER_NOT_FOUND));
+  }
+
+  private void finishTurn(SpecialityEnum speciality, int levelAttention, Doctor doctor) {
+    Optional<Turn> currentTurn = turnService.getCurrentTurn(speciality);
+
+    currentTurn.ifPresent(
+        turn -> {
+          turnService.updateStatus(turn.getId(), StatusEnum.COMPLETED);
+          turnService.updateLevelAttention(turn.getId(), levelAttention);
+          turnService.updateDoctor(turn.getId(), doctor);
+        });
   }
 
   private void startTurn(Turn turn) {
     turnService.updateStatus(turn.getId(), StatusEnum.CURRENT);
+
     UniversityWelfare universityWelfare = universityWelfareRepository.getUniversityWelfare();
     universityWelfare.setLastTurn(turn);
     universityWelfareRepository.save(universityWelfare);
