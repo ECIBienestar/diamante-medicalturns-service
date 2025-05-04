@@ -7,13 +7,19 @@ import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Doctor;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Turn;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.User;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.TurnRepository;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.projection.AverageLevelByRole;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.projection.AverageLevelBySpeciality;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.projection.CountByRole;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.projection.CountBySpeciality;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.SpecialitySequenceService;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.TurnService;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.UserService;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.RoleEnum;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.SpecialityEnum;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.StatusEnum;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -98,6 +104,60 @@ public class TurnServiceImpl implements TurnService {
     Turn turn = getTurn(turnId);
     turn.setDoctor(doctor);
     turnRepository.save(turn);
+  }
+
+  @Override
+  public List<AverageLevelByRole> getAverageLevelAttentionByRole(
+      RoleEnum role, LocalDate start, LocalDate end) {
+    List<AverageLevelByRole> allAverages =
+        turnRepository.getAverageLevelAttentionByRole(
+            start.atStartOfDay(), end.atTime(LocalTime.MAX));
+
+    if (allAverages.isEmpty()) return allAverages;
+
+    return allAverages.stream().filter(avg -> role == null || avg.getRole() == role).toList();
+  }
+
+  @Override
+  public List<CountByRole> getTurnCountByRole(
+      RoleEnum role, LocalDate start, LocalDate end, StatusEnum status) {
+    List<CountByRole> allCounts =
+        turnRepository.getTurnCountByRole(start.atStartOfDay(), end.atTime(LocalTime.MAX));
+
+    if (allCounts.isEmpty()) return allCounts;
+
+    return allCounts.stream()
+        .filter(count -> role == null || count.getRole() == role)
+        .filter(count -> status == null || count.getStatus() == status)
+        .toList();
+  }
+
+  @Override
+  public List<AverageLevelBySpeciality> getAverageLevelAttentionBySpeciality(
+      SpecialityEnum speciality, LocalDate start, LocalDate end) {
+    List<AverageLevelBySpeciality> allAverages =
+        turnRepository.getAverageLevelAttentionBySpeciality(
+            start.atStartOfDay(), end.atTime(LocalTime.MAX));
+
+    if (allAverages.isEmpty()) return allAverages;
+
+    return allAverages.stream()
+        .filter(avg -> speciality == null || avg.getSpeciality() == speciality)
+        .toList();
+  }
+
+  @Override
+  public List<CountBySpeciality> getTurnCountBySpeciality(
+      SpecialityEnum speciality, LocalDate start, LocalDate end, StatusEnum status) {
+    List<CountBySpeciality> allCounts =
+        turnRepository.getTurnCountBySpeciality(start.atStartOfDay(), end.atTime(LocalTime.MAX));
+
+    if (allCounts.isEmpty()) return allCounts;
+
+    return allCounts.stream()
+        .filter(count -> speciality == null || count.getSpeciality() == speciality)
+        .filter(count -> status == null || count.getStatus() == status)
+        .toList();
   }
 
   private User ensureUserExists(CreateUserRequest user) {
