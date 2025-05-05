@@ -63,7 +63,7 @@ public class UniversityWelfareServiceImpl implements UniversityWelfareService {
   public TurnResponse callNextTurn(String doctorId, SpecialityEnum speciality, int levelAttention) {
     Doctor doctor = getDoctor(doctorId);
 
-    finishTurn(speciality, levelAttention, doctor);
+    turnService.finishTurn(speciality, levelAttention, doctor);
 
     Turn nextTurn =
         turnService
@@ -79,7 +79,7 @@ public class UniversityWelfareServiceImpl implements UniversityWelfareService {
       String doctorId, Long nextTurnId, SpecialityEnum speciality, int levelAttention) {
     Doctor doctor = getDoctor(doctorId);
 
-    finishTurn(speciality, levelAttention, doctor);
+    turnService.finishTurn(speciality, levelAttention, doctor);
 
     Turn nextTurn = turnService.getTurn(nextTurnId);
 
@@ -145,19 +145,8 @@ public class UniversityWelfareServiceImpl implements UniversityWelfareService {
             .orElseThrow(() -> new MedicalTurnsException(MedicalTurnsException.USER_NOT_FOUND));
   }
 
-  private void finishTurn(SpecialityEnum speciality, int levelAttention, Doctor doctor) {
-    Optional<Turn> currentTurn = turnService.getCurrentTurn(speciality);
-
-    currentTurn.ifPresent(
-        turn -> {
-          turnService.updateStatus(turn.getId(), StatusEnum.COMPLETED);
-          turnService.updateLevelAttention(turn.getId(), levelAttention);
-          turnService.updateDoctor(turn.getId(), doctor);
-        });
-  }
-
   private void startTurn(Turn turn) {
-    turnService.updateStatus(turn.getId(), StatusEnum.CURRENT);
+    turnService.startTurn(turn);
 
     UniversityWelfare universityWelfare = universityWelfareRepository.getUniversityWelfare();
     universityWelfare.setLastTurn(turn);

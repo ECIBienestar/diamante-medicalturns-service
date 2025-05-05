@@ -40,7 +40,7 @@ public interface TurnRepository extends JpaRepository<Turn, Long> {
       @Param("speciality") SpecialityEnum speciality);
 
   @Query(
-      "SELECT t.user.role AS role, AVG(t.levelAttention) AS averageLevel FROM Turn t WHERE t.date BETWEEN :startOfDay AND :endOfDay GROUP BY t.user.role")
+      "SELECT t.user.role AS role, AVG(t.levelAttention) AS averageLevel FROM Turn t WHERE t.date BETWEEN :startOfDay AND :endOfDay AND t.status = eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.StatusEnum.COMPLETED GROUP BY t.user.role")
   List<AverageLevelByRole> getAverageLevelAttentionByRole(
       @Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
 
@@ -50,7 +50,7 @@ public interface TurnRepository extends JpaRepository<Turn, Long> {
       @Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
 
   @Query(
-      "SELECT t.speciality AS speciality, AVG(t.levelAttention) AS averageLevel FROM Turn t WHERE t.date BETWEEN :startOfDay AND :endOfDay GROUP BY t.speciality")
+      "SELECT t.speciality AS speciality, AVG(t.levelAttention) AS averageLevel FROM Turn t WHERE t.date BETWEEN :startOfDay AND :endOfDay AND t.status = eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.StatusEnum.COMPLETED GROUP BY t.speciality")
   List<AverageLevelBySpeciality> getAverageLevelAttentionBySpeciality(
       @Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
 
