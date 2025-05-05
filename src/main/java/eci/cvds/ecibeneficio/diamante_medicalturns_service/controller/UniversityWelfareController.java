@@ -51,7 +51,7 @@ public class UniversityWelfareController {
                     .body(ApiResponse.error("No turn found")));
   }
 
-  @GetMapping("/current -turn/{speciality}")
+  @GetMapping("/current-turn/{speciality}")
   public ResponseEntity<ApiResponse<TurnResponse>> getLastTurn(
       @PathVariable SpecialityEnum speciality) {
     Optional<TurnResponse> turn = universityWelfareService.getCurrentTurn(speciality);
