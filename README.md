@@ -98,27 +98,19 @@ Astha Diagrama de clases: [Astha Diagrama de clases](<assets/docs/diamante_medic
 
 ### 📡 Endpoints REST
 
-| Método | Endpoint                                | Descripción                                                           | Entrada                   | Salida                                  |
-| ------ | --------------------------------------- | --------------------------------------------------------------------- | ------------------------- | --------------------------------------- |
-| POST   | `/api/turns`                            | Crea un nuevo turno                                                   | `CreateTurnRequest`       | `ApiResponse<TurnResponse>`             |
-| GET    | `/api/turns`                            | Devuelve todos los turnos del día actual                              | N/A                       | `ApiResponse<List<TurnResponse>>`       |
-| GET    | `/api/turns/{speciality}`               | Devuelve los turnos del día por especialidad                          | `speciality` (path param) | `ApiResponse<List<TurnResponse>>`       |
-| GET    | `/api/turns/last-turn`                  | Devuelve el último turno llamado                                      | N/A                       | `ApiResponse<TurnResponse>`             |
-| GET    | `/api/turns/last-turn/{speciality}`     | Devuelve el último turno de una especialidad                          | `speciality` (path param) | `ApiResponse<TurnResponse>`             |
-| POST   | `/api/turns/call-next`                  | Llama al siguiente turno en secuencia                                 | `CallTurnRequest`         | `ApiResponse<TurnResponse>`             |
-| POST   | `/api/turns/call`                       | Llama a un turno específico                                           | `CallTurnRequest`         | `ApiResponse<TurnResponse>`             |
-| POST   | `/api/turns/enable`                     | Habilita todos los turnos de todas las especialidades                 | N/A                       | N/A                                     |
-| POST   | `/api/turns/disable`                    | Deshabilita todos los turnos de todas las especialidades              | N/A                       | N/A                                     |
-| POST   | `/api/turns/enable/{speciality}`        | Habilita los turnos de una especialidad                               | `speciality` (path param) | N/A                                     |
-| POST   | `/api/turns/disable/{speciality}`       | Deshabilita los turnos de una especialidad                            | `speciality` (path param) | N/A                                     |
-| POST   | `/api/multimedia`                       | Sube nuevo contenido multimedia                                       | `CreateMultimediaRequest` | N/A                                     |
-| GET    | `/api/multimedia/{id}`                  | Devuelve un contenido multimedia por ID                               | `id` (path param)         | `ApiResponse<MultimediaResponse>`       |
-| GET    | `/api/multimedia`                       | Devuelve la lista de todos los contenidos multimedia                  | N/A                       | `ApiResponse<List<MultimediaResponse>>` |
-| DELETE | `/api/multimedia/{id}`                  | Elimina un contenido multimedia por ID                                | `id` (path param)         | N/A                                     |
-| GET    | `/api/reports`                          | Devuelve reportes de atención según el rol del paciente y un rango    | `role`, `start`, `end`    | `ApiResponse<List<ReportResponse>>`     |
-| GET    | `/api/reports/attention-level/average`  | Promedio de calidad de atención por especialidad                      | `role`, `start`, `end`    | `ApiResponse<Map<String, Integer>>`     |
-| GET    | `/api/reports/turns/count-by-specialty` | Distribución de turnos por especialidad y tipo de usuario             | `role`, `start`, `end`    | `ApiResponse<Map<String, Integer>>`     |
-| GET    | `/api/reports/turns/status`             | Reportes de atención filtrados por estado del turno y rango de fechas | `status`, `start`, `end`  | `ApiResponse<List<ReportResponse>>`     |
+- [ ] Endpoints para bienestar universitario
+  ![Diagrama de Datos](<assets/imgs/University welfare endpoints.png>)
+
+- [ ] Endpoints para contenido informativo
+  ![Diagrama de Datos](<assets/imgs/Multimedia endpoints.png>)
+
+- [ ] Endpoints para reportes
+  ![Diagrama de Datos](<assets/imgs/Report endpoints.png>)
+
+Swagger: [Swagger UI](http://localhost:8080/swagger-ui.html)
+
+**📌 Nota:** Mas adelante se desplegara para que pueda ser accesible.
+
 
 ### 😊 Happy Path
 
