@@ -39,27 +39,4 @@ public class GlobalHandlerException {
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(ApiResponse.error("Something went wrong"));
   }
-
-  // Invalid parameter value (e.g., wrongly written enums)
-  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-  public ResponseEntity<ApiResponse<Void>> handleTypeMismatch(
-      MethodArgumentTypeMismatchException ex) {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(ex.getMessage()));
-  }
-
-  // Problems when reading the body or parsing dates/values
-  @ExceptionHandler(HttpMessageNotReadableException.class)
-  public ResponseEntity<ApiResponse<Void>> handleInvalidFormat(HttpMessageNotReadableException ex) {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        .body(
-            ApiResponse.error(
-                "Invalid format in the request body or in a parameter (e.g., date or enum)."));
-  }
-
-  // Invalid date format
-  @ExceptionHandler(DateTimeParseException.class)
-  public ResponseEntity<ApiResponse<Void>> handleDateParse(DateTimeParseException ex) {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        .body(ApiResponse.error("Invalid date format. Use yyyy-MM-dd."));
-  }
 }
