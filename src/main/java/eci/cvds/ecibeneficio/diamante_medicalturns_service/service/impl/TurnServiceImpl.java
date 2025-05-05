@@ -17,6 +17,7 @@ import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.UserService;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.RoleEnum;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.SpecialityEnum;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.StatusEnum;
+import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -85,25 +86,27 @@ public class TurnServiceImpl implements TurnService {
         .findFirst();
   }
 
+  @Transactional
   @Override
-  public void updateStatus(Long id, StatusEnum status) {
-    Turn turn = getTurn(id);
-    turn.setStatus(status);
-    turnRepository.save(turn);
+  public void finishTurn(SpecialityEnum speciality, int levelAttention, Doctor doctor) {
+    Optional<Turn> currentTurn = getCurrentTurn(speciality);
+
+    currentTurn.ifPresent(
+        turn -> {
+          turn.setStatus(StatusEnum.COMPLETED);
+          turn.setLevelAttention(levelAttention);
+          turn.setDoctor(doctor);
+          turnRepository.save(turn);
+          turnRepository.flush();
+        });
   }
 
+  @Transactional
   @Override
-  public void updateLevelAttention(Long id, int levelAttention) {
-    Turn turn = getTurn(id);
-    turn.setLevelAttention(levelAttention);
+  public void startTurn(Turn turn) {
+    turn.setStatus(StatusEnum.CURRENT);
     turnRepository.save(turn);
-  }
-
-  @Override
-  public void updateDoctor(Long turnId, Doctor doctor) {
-    Turn turn = getTurn(turnId);
-    turn.setDoctor(doctor);
-    turnRepository.save(turn);
+    turnRepository.flush();
   }
 
   @Override
