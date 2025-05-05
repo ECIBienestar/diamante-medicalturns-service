@@ -78,14 +78,13 @@ Astha Diagrama de clases: [Astha Diagrama de clases](<assets/docs/diamante_medic
 
 - [ ] Diagrama de Componentes
 
-1. Turn Management Service
+1. Turn Management Service  
    ![Turn Management Service](<assets/imgs/Diagrama de Componentes 1.png>)
-2. Multimedia Management Service
+2. Multimedia Management Service  
    ![Multimedia Management Service](<assets/imgs/Diagrama de Componentes 2.png>)
-3. Report Service
+3. Report Service  
    ![Report Service](<assets/imgs/Diagrama de Componentes 3.png>)
-4. Notification Service
-
+4. Notification Service  
 ![Notification Service](<assets/imgs/Diagrama de Componentes 5.png>)
 
 
@@ -105,13 +104,13 @@ Astha Diagrama de clases: [Astha Diagrama de clases](<assets/docs/diamante_medic
 
 ### 📡 Endpoints REST
 
-- [ ] Endpoints para bienestar universitario
+- [ ] Endpoints para bienestar universitario  
   ![Diagrama de Datos](<assets/imgs/University welfare endpoints.png>)
 
-- [ ] Endpoints para contenido informativo
+- [ ] Endpoints para contenido informativo  
   ![Diagrama de Datos](<assets/imgs/Multimedia endpoints.png>)
 
-- [ ] Endpoints para reportes
+- [ ] Endpoints para reportes  
   ![Diagrama de Datos](<assets/imgs/Report endpoints.png>)
 
 Swagger: [Swagger UI](http://localhost:8080/swagger-ui.html)
