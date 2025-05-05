@@ -15,11 +15,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UniversityWelfare {
   @Id private int id;
-
-  @OneToOne
-  @JoinColumn(name = "turn_id")
-  private Turn lastTurn;
-
   private boolean disableTurns = false;
 
   @ElementCollection(targetClass = SpecialityEnum.class)
