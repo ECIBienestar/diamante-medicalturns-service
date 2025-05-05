@@ -1,6 +1,10 @@
 package eci.cvds.ecibeneficio.diamante_medicalturns_service.repository;
 
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Turn;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.projection.AverageLevelByRole;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.projection.AverageLevelBySpeciality;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.projection.CountByRole;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.projection.CountBySpeciality;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.SpecialityEnum;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,4 +38,29 @@ public interface TurnRepository extends JpaRepository<Turn, Long> {
       @Param("startOfDay") LocalDateTime startOfDay,
       @Param("endOfDay") LocalDateTime endOfDay,
       @Param("speciality") SpecialityEnum speciality);
+
+  @Query(
+      "SELECT t FROM Turn t WHERE t.date BETWEEN :startOfDay AND :endOfDay AND t.status = eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.StatusEnum.CURRENT ORDER BY t.date DESC")
+  List<Turn> findCurrentTurns(
+      @Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
+
+  @Query(
+      "SELECT t.user.role AS role, AVG(t.levelAttention) AS averageLevel FROM Turn t WHERE t.date BETWEEN :startOfDay AND :endOfDay AND t.status = eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.StatusEnum.COMPLETED GROUP BY t.user.role")
+  List<AverageLevelByRole> getAverageLevelAttentionByRole(
+      @Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
+
+  @Query(
+      "SELECT t.user.role AS role, t.status AS status, COUNT(t) AS count FROM Turn t WHERE t.date BETWEEN :startOfDay AND :endOfDay GROUP BY t.user.role, t.status")
+  List<CountByRole> getTurnCountByRole(
+      @Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
+
+  @Query(
+      "SELECT t.speciality AS speciality, AVG(t.levelAttention) AS averageLevel FROM Turn t WHERE t.date BETWEEN :startOfDay AND :endOfDay AND t.status = eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.StatusEnum.COMPLETED GROUP BY t.speciality")
+  List<AverageLevelBySpeciality> getAverageLevelAttentionBySpeciality(
+      @Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
+
+  @Query(
+      "SELECT t.speciality AS speciality, t.status AS status, COUNT(t) AS count FROM Turn t WHERE t.date BETWEEN :startOfDay AND :endOfDay GROUP BY t.speciality, t.status")
+  List<CountBySpeciality> getTurnCountBySpeciality(
+      @Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
 }
