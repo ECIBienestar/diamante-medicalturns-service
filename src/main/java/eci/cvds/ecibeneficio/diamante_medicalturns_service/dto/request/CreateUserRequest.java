@@ -13,9 +13,12 @@ import lombok.Setter;
     property = "role",
     visible = true)
 @JsonSubTypes({
-  @JsonSubTypes.Type(value = CreateDoctorRequest.class, name = "DOCTOR"),
   @JsonSubTypes.Type(value = CreateUserRequest.class, name = "ESTUDIANTE"),
-  @JsonSubTypes.Type(value = CreateUserRequest.class, name = "SECRETARIA")
+  @JsonSubTypes.Type(value = CreateUserRequest.class, name = "DOCENTE"),
+  @JsonSubTypes.Type(value = CreateUserRequest.class, name = "ADMINISTRATIVO"),
+  @JsonSubTypes.Type(value = CreateUserRequest.class, name = "SERVICIOS_GENERALES"),
+  @JsonSubTypes.Type(value = CreateDoctorRequest.class, name = "DOCTOR"),
+  @JsonSubTypes.Type(value = CreateUserRequest.class, name = "SECRETARIA_MEDICA")
 })
 @Getter
 @Setter

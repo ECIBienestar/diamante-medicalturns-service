@@ -6,6 +6,10 @@ import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.ApiRespo
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.TurnResponse;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.UniversityWelfareService;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.SpecialityEnum;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -16,21 +20,61 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/turns")
 @AllArgsConstructor
+@Tag(name = "Bienestar Universitario", description = "Operaciones relacionadas con la gestión de bienestar universitario")
 public class UniversityWelfareController {
   private final UniversityWelfareService universityWelfareService;
 
+  @Operation(summary = "Crear turno", description = "Crea un nuevo turno para atención médica.")
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        description = "Turno creado exitosamente",
+        content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "400",
+        description = "El usuario ya tiene un turno o los turnos están deshabilitados",
+        content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "500",
+        description = "Error en el servidor",
+        content = @Content(mediaType = "application/json"))
+  })
   @PostMapping()
   public ResponseEntity<ApiResponse<TurnResponse>> addTurn(@RequestBody CreateTurnRequest turn) {
     return ResponseEntity.ok(
         ApiResponse.success("Turn created", universityWelfareService.addTurn(turn)));
   }
 
+  @Operation(
+      summary = "Obtener todos los turnos",
+      description = "Devuelve todos los turnos existentes.")
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        description = "Turnos obtenidos exitosamente",
+        content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "500",
+        description = "Error en el servidor",
+        content = @Content(mediaType = "application/json"))
+  })
   @GetMapping()
   public ResponseEntity<ApiResponse<List<TurnResponse>>> getTurns() {
     return ResponseEntity.ok(
         ApiResponse.success("Turns obtained", universityWelfareService.getTurns()));
   }
 
+  @Operation(summary = "Obtener turnos por especialidad")
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        description = "Turnos obtenidos exitosamente",
+        content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "500",
+        description = "Error en el servidor",
+        content = @Content(mediaType = "application/json"))
+  })
   @GetMapping("/{speciality}")
   public ResponseEntity<ApiResponse<List<TurnResponse>>> getTurns(
       @PathVariable SpecialityEnum speciality) {
@@ -38,6 +82,17 @@ public class UniversityWelfareController {
         ApiResponse.success("Turns obtained", universityWelfareService.getTurns(speciality)));
   }
 
+  @Operation(summary = "Obtener el ultimo turno llamado")
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        description = "Ultimo turno llamado obtenido exitosamente",
+        content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "500",
+        description = "Error en el servidor",
+        content = @Content(mediaType = "application/json"))
+  })
   @GetMapping("/current-turn")
   public ResponseEntity<ApiResponse<TurnResponse>> getLastTurn() {
     Optional<TurnResponse> turn = universityWelfareService.getLastCurrentTurn();
@@ -51,6 +106,17 @@ public class UniversityWelfareController {
                     .body(ApiResponse.error("No turn found")));
   }
 
+  @Operation(summary = "Obtener el ultimo turno llamado dad una especialidad")
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        description = "Ultimo turno llamado por especialidad obtenido exitosamente",
+        content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "500",
+        description = "Error en el servidor",
+        content = @Content(mediaType = "application/json"))
+  })
   @GetMapping("/current-turn/{speciality}")
   public ResponseEntity<ApiResponse<TurnResponse>> getLastTurn(
       @PathVariable SpecialityEnum speciality) {
@@ -65,6 +131,21 @@ public class UniversityWelfareController {
                     .body(ApiResponse.error("No turn found")));
   }
 
+  @Operation(summary = "Llamar siguiente turno automáticamente")
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        description = "Turno llamado exitosamente",
+        content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "400",
+        description = "El doctor no existe o no hay mas turnos",
+        content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "500",
+        description = "Error en el servidor",
+        content = @Content(mediaType = "application/json"))
+  })
   @PostMapping("/call-next")
   public ResponseEntity<ApiResponse<TurnResponse>> callNextTurn(
       @RequestBody CallTurnRequest callNextTurn) {
@@ -77,6 +158,21 @@ public class UniversityWelfareController {
                 callNextTurn.getLevelAttention())));
   }
 
+  @Operation(summary = "Llamar turno específico")
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        description = "Turno llamado exitosamente",
+        content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "400",
+        description = "El doctor no existe o no hay mas turnos",
+        content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "500",
+        description = "Error en el servidor",
+        content = @Content(mediaType = "application/json"))
+  })
   @PostMapping("/call")
   public ResponseEntity<ApiResponse<TurnResponse>> callTurn(
       @RequestBody CallTurnRequest callNextTurn) {
@@ -90,24 +186,76 @@ public class UniversityWelfareController {
                 callNextTurn.getLevelAttention())));
   }
 
+  @Operation(summary = "Habilitar turnos")
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        description = "Turnos habilitados exitosamente",
+        content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "500",
+        description = "Error en el servidor",
+        content = @Content(mediaType = "application/json"))
+  })
   @PostMapping("/enable")
   public ResponseEntity<ApiResponse<Void>> enableTurns() {
     universityWelfareService.enableTurns();
     return ResponseEntity.ok(ApiResponse.success("Turns enabled"));
   }
 
+  @Operation(summary = "Deshabilitar turnos")
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        description = "Turnos deshabilitados exitosamente",
+        content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "500",
+        description = "Error en el servidor",
+        content = @Content(mediaType = "application/json"))
+  })
   @PostMapping("/disable")
   public ResponseEntity<ApiResponse<Void>> disableTurns() {
     universityWelfareService.disableTurns();
     return ResponseEntity.ok(ApiResponse.success("Turns disabled"));
   }
 
+  @Operation(summary = "Habilitar turnos por especialidad")
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        description = "Turnos habilitados para la especialidad",
+        content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "400",
+        description = "Los turnos ya estan deshabilitados",
+        content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "500",
+        description = "Error en el servidor",
+        content = @Content(mediaType = "application/json"))
+  })
   @PostMapping("/enable/{speciality}")
   public ResponseEntity<ApiResponse<Void>> enableTurns(@PathVariable SpecialityEnum speciality) {
     universityWelfareService.enableTurns(speciality);
     return ResponseEntity.ok(ApiResponse.success("Turns enabled"));
   }
 
+  @Operation(summary = "Deshabilitar turnos por especialidad")
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        description = "Turnos habilitados para la especialidad",
+        content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "400",
+        description = "Los turnos ya estan deshabilitados",
+        content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "500",
+        description = "Error en el servidor",
+        content = @Content(mediaType = "application/json"))
+  })
   @PostMapping("/disable/{speciality}")
   public ResponseEntity<ApiResponse<Void>> disableTurns(@PathVariable SpecialityEnum speciality) {
     universityWelfareService.disableTurns(speciality);
