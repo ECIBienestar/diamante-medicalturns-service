@@ -13,9 +13,9 @@ public interface UniversityWelfareService {
 
   List<TurnResponse> getTurns(SpecialityEnum speciality);
 
-  Optional<TurnResponse> getCurrentTurn();
-
   Optional<TurnResponse> getCurrentTurn(SpecialityEnum speciality);
+
+  Optional<TurnResponse> getLastCurrentTurn();
 
   TurnResponse callNextTurn(String doctorId, SpecialityEnum speciality, int levelAttention);
 
