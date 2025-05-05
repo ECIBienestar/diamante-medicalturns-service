@@ -40,7 +40,7 @@ public class UniversityWelfareController {
 
   @GetMapping("/current-turn")
   public ResponseEntity<ApiResponse<TurnResponse>> getLastTurn() {
-    Optional<TurnResponse> turn = universityWelfareService.getCurrentTurn();
+    Optional<TurnResponse> turn = universityWelfareService.getLastCurrentTurn();
 
     return turn.map(
             turnResponse ->
