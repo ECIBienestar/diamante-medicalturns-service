@@ -76,7 +76,14 @@ public class TurnServiceImpl implements TurnService {
   public Optional<Turn> getCurrentTurn(SpecialityEnum speciality) {
     var timeRange = getTodayTimeRange();
 
-    return turnRepository.findCurrentTurn(timeRange.start, timeRange.end, speciality); //
+    return turnRepository.findCurrentTurn(timeRange.start, timeRange.end, speciality);
+  }
+
+  @Override
+  public Optional<Turn> getLastCurrentTurn() {
+    var timeRange = getTodayTimeRange();
+
+    return turnRepository.findCurrentTurns(timeRange.start, timeRange.end).stream().findFirst();
   }
 
   @Override
@@ -101,12 +108,28 @@ public class TurnServiceImpl implements TurnService {
         });
   }
 
+  @Override
+  @Transactional
+  public Turn startNextTurn(SpecialityEnum speciality) {
+    Turn turn =
+        getLastTurn(speciality)
+            .orElseThrow(() -> new MedicalTurnsException(MedicalTurnsException.LAST_TURN));
+
+    return startTurn(turn);
+  }
+
   @Transactional
   @Override
-  public void startTurn(Turn turn) {
+  public Turn startTurn(Turn turn) {
+    if (!turn.getStatus().equals(StatusEnum.PENDING)) {
+      throw new MedicalTurnsException(MedicalTurnsException.TURN_COMPLETED);
+    }
+
     turn.setStatus(StatusEnum.CURRENT);
     turnRepository.save(turn);
     turnRepository.flush();
+
+    return getTurn(turn.getId());
   }
 
   @Override

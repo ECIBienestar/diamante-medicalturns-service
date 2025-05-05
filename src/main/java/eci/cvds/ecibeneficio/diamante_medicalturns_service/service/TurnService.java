@@ -25,11 +25,15 @@ public interface TurnService {
 
   Optional<Turn> getCurrentTurn(SpecialityEnum speciality);
 
+  Optional<Turn> getLastCurrentTurn();
+
   Optional<Turn> getLastTurn(SpecialityEnum speciality);
 
   void finishTurn(SpecialityEnum speciality, int levelAttention, Doctor doctor);
 
-  void startTurn(Turn turn);
+  Turn startNextTurn(SpecialityEnum speciality);
+
+  Turn startTurn(Turn turn);
 
   List<AverageLevelByRole> getAverageLevelAttentionByRole(
       RoleEnum role, LocalDate start, LocalDate end);
