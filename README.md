@@ -49,9 +49,10 @@ El módulo opera como un microservicio independiente, orquestado dentro de una a
 | **Estadistics Service** | Registro histórico y generación de reportes            |
 | **Event Bus**           | Middleware de eventos asincrónicos (Kafka + Cloud Bus) |
 
-#### 🔗 Diagrama de microservicios
 
-![microservicios](assets/imgs/microservicios.png)
+#### 🔗 Diagrama de Microservicios
+![microservicios](<assets/imgs/Diagrama de Microservicios.png>)
+
 
 ### 🏗️ Estilo Arquitectónico
 
@@ -70,7 +71,8 @@ El **MOD-LLL-001: Módulo de Turnos Médicos** expone una API RESTful para gesti
 ## 📊 Diagramas del Sistema
 
 - [ ] Diagrama de Clases
-      ![Diagrama de Clases](<assets/imgs/Diagrama de Clases.png>)
+
+![Diagrama de Clases](<assets/imgs/Diagrama de Clases v2.jpg>)
 
 Astha Diagrama de clases: [Astha Diagrama de clases](<assets/docs/diamante_medicalturns_service - Diagrama de clases.asta>)
 
@@ -83,14 +85,19 @@ Astha Diagrama de clases: [Astha Diagrama de clases](<assets/docs/diamante_medic
 3. Report Service
    ![Report Service](<assets/imgs/Diagrama de Componentes 3.png>)
 4. Notification Service
-   ![Notification Service](<assets/imgs/Diagrama de Componentes 4.png>)
+
+![Notification Service](<assets/imgs/Diagrama de Componentes 5.png>)
+
 
 - [ ] Diagrama de Secuencia
 
   > Aun por Definir
 
 - [ ] Diagrama de Datos
+
       ![Diagrama de Datos](<assets/imgs/Diagrama de Datos.png>)
+      
+![Diagrama de Datos](<assets/imgs/Diagrama de Datos v2.jpg>)
 
 ---
 
@@ -239,26 +246,85 @@ Este endpoint se encuentra protegido por autenticación JWT, por lo que deberás
 
 ```
 C:.
+├───.github
+│   └───workflows
 ├───.mvn
 │   └───wrapper
-└───src
-    ├───main
-    │   ├───java
-    │   │   └───eci
-    │   │       └───cvds
-    │   │           └───ecibeneficio
-    │   │               └───diamante_medicalturns_service
-    │   │                   ├───controller
-    │   │                   ├───model
-    │   │                   ├───repository
-    │   │                   └───service
-    │   └───resources
-    └───test
-        └───java
-            └───eci
-                └───cvds
-                    └───ecibeneficio
-                        └───diamante_medicalturns_service
+├───assets
+│   ├───docs
+│   └───imgs
+├───src
+│   ├───main
+│   │   ├───java
+│   │   │   └───eci
+│   │   │       └───cvds
+│   │   │           └───ecibeneficio
+│   │   │               └───diamante_medicalturns_service
+│   │   │                   ├───config
+│   │   │                   │   └───initializer
+│   │   │                   ├───controller
+│   │   │                   ├───dto
+│   │   │                   │   ├───request
+│   │   │                   │   └───response
+│   │   │                   ├───exception
+│   │   │                   ├───factory
+│   │   │                   │   └───impl
+│   │   │                   ├───model
+│   │   │                   │   └───enums
+│   │   │                   ├───repository
+│   │   │                   │   └───projection
+│   │   │                   ├───service
+│   │   │                   │   └───impl
+│   │   │                   └───utils
+│   │   │                       ├───enums
+│   │   │                       └───mapper
+│   │   └───resources
+│   └───test
+│       └───java
+│           └───eci
+│               └───cvds
+│                   └───ecibeneficio
+│                       └───diamante_medicalturns_service
+└───target
+    ├───classes
+    │   └───eci
+    │       └───cvds
+    │           └───ecibeneficio
+    │               └───diamante_medicalturns_service
+    │                   ├───config
+    │                   │   └───initializer
+    │                   ├───controller
+    │                   ├───dto
+    │                   │   ├───request
+    │                   │   └───response
+    │                   ├───exception
+    │                   ├───factory
+    │                   │   └───impl
+    │                   ├───model
+    │                   │   └───enums
+    │                   ├───repository
+    │                   │   └───projection
+    │                   ├───service
+    │                   │   └───impl
+    │                   └───utils
+    │                       ├───enums
+    │                       └───mapper
+    ├───generated-sources
+    │   └───annotations
+    ├───generated-test-sources
+    │   └───test-annotations
+    ├───maven-status
+    │   └───maven-compiler-plugin
+    │       ├───compile
+    │       │   └───default-compile
+    │       └───testCompile
+    │           └───default-testCompile
+    ├───surefire-reports
+    └───test-classes
+        └───eci
+            └───cvds
+                └───ecibeneficio
+                    └───diamante_medicalturns_service
 ```
 
 ---
