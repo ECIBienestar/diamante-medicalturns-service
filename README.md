@@ -76,6 +76,10 @@ El **MOD-LLL-001: Módulo de Turnos Médicos** expone una API RESTful para gesti
 
 Astha Diagrama de clases: [Astha Diagrama de clases](<assets/docs/diamante_medicalturns_service - Diagrama de clases.asta>)
 
+- [ ] Diagrama de Componentes Generales
+
+![Diagrama de Componentes](<assets/imgs/Diagrama de Componentes Generales.png>)
+
 - [ ] Diagrama de Componentes
 
 1. Turn Management Service
