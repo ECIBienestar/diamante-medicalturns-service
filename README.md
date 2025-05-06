@@ -87,9 +87,6 @@ Astha Diagrama de clases: [Astha Diagrama de clases](<assets/docs/diamante_medic
 3. Report Service  
    
 ![Report Service](<assets/imgs/Diagrama de Componentes 3.png>)
-4. Notification Service  
-
-![Notification Service](<assets/imgs/Diagrama de Componentes 5.png>)
 
 
 - [ ] Diagrama de Secuencia
