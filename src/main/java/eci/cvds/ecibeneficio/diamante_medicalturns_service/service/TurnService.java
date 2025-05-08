@@ -31,6 +31,8 @@ public interface TurnService {
 
   void finishTurn(SpecialityEnum speciality, int levelAttention, Doctor doctor);
 
+  void skipTurn(SpecialityEnum speciality, Doctor doctor);
+
   Turn startNextTurn(SpecialityEnum speciality);
 
   Turn startTurn(Turn turn);
