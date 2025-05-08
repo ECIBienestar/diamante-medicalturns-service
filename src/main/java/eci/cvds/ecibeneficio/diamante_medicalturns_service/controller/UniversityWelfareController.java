@@ -2,6 +2,7 @@ package eci.cvds.ecibeneficio.diamante_medicalturns_service.controller;
 
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CallTurnRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateTurnRequest;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.SkipTurnRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.ApiResponse;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.TurnResponse;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.UniversityWelfareService;
@@ -20,7 +21,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/turns")
 @AllArgsConstructor
-@Tag(name = "Bienestar Universitario", description = "Operaciones relacionadas con la gestión de bienestar universitario")
+@Tag(
+    name = "Bienestar Universitario",
+    description = "Operaciones relacionadas con la gestión de bienestar universitario")
 public class UniversityWelfareController {
   private final UniversityWelfareService universityWelfareService;
 
@@ -184,6 +187,28 @@ public class UniversityWelfareController {
                 callNextTurn.getTurnId(),
                 callNextTurn.getSpeciality(),
                 callNextTurn.getLevelAttention())));
+  }
+
+  @Operation(summary = "Finaliza un turno por inasistencia del usuario")
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        description = "Turno finalizado exitosamente",
+        content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "400",
+        description = "El doctor no existe",
+        content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "500",
+        description = "Error en el servidor",
+        content = @Content(mediaType = "application/json"))
+  })
+  @PostMapping("/skip")
+  public ResponseEntity<ApiResponse<TurnResponse>> skipTurn(@RequestBody SkipTurnRequest skipTurn) {
+    universityWelfareService.skipTurn(skipTurn.getDoctorId(), skipTurn.getSpeciality());
+
+    return ResponseEntity.ok(ApiResponse.success("Successfully skipped turn"));
   }
 
   @Operation(summary = "Habilitar turnos")
