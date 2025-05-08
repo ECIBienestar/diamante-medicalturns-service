@@ -108,6 +108,20 @@ public class TurnServiceImpl implements TurnService {
         });
   }
 
+  @Transactional
+  @Override
+  public void skipTurn(SpecialityEnum speciality, Doctor doctor) {
+    Optional<Turn> currentTurn = getCurrentTurn(speciality);
+
+    currentTurn.ifPresent(
+        turn -> {
+          turn.setStatus(StatusEnum.FINISHED);
+          turn.setDoctor(doctor);
+          turnRepository.save(turn);
+          turnRepository.flush();
+        });
+  }
+
   @Override
   @Transactional
   public Turn startNextTurn(SpecialityEnum speciality) {
