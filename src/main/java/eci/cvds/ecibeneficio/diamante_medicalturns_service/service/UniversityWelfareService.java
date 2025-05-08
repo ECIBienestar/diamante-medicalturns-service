@@ -22,6 +22,8 @@ public interface UniversityWelfareService {
   TurnResponse callNextTurn(
       String doctorId, Long nextTurn, SpecialityEnum speciality, int levelAttention);
 
+  void skipTurn(String doctorId, SpecialityEnum speciality);
+
   void disableTurns();
 
   void enableTurns();
