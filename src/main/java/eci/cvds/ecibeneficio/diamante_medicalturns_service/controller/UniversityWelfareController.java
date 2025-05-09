@@ -16,6 +16,7 @@ import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -61,6 +62,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasRole('SECRETARIA_MEDICA')")
   @GetMapping()
   public ResponseEntity<ApiResponse<List<TurnResponse>>> getTurns() {
     return ResponseEntity.ok(
@@ -78,6 +80,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasRole('DOCTOR')")
   @GetMapping("/{speciality}")
   public ResponseEntity<ApiResponse<List<TurnResponse>>> getTurns(
       @PathVariable SpecialityEnum speciality) {
@@ -96,6 +99,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasRole('SECRETARIA_MEDICA')")
   @GetMapping("/current-turn")
   public ResponseEntity<ApiResponse<TurnResponse>> getLastTurn() {
     Optional<TurnResponse> turn = universityWelfareService.getLastCurrentTurn();
@@ -120,6 +124,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasRole('DOCTOR')")
   @GetMapping("/current-turn/{speciality}")
   public ResponseEntity<ApiResponse<TurnResponse>> getLastTurn(
       @PathVariable SpecialityEnum speciality) {
@@ -149,6 +154,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasRole('DOCTOR')")
   @PostMapping("/call-next")
   public ResponseEntity<ApiResponse<TurnResponse>> callNextTurn(
       @RequestBody CallTurnRequest callNextTurn) {
@@ -176,6 +182,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasRole('DOCTOR')")
   @PostMapping("/call")
   public ResponseEntity<ApiResponse<TurnResponse>> callTurn(
       @RequestBody CallTurnRequest callNextTurn) {
@@ -204,6 +211,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasRole('DOCTOR')")
   @PostMapping("/skip")
   public ResponseEntity<ApiResponse<TurnResponse>> skipTurn(@RequestBody SkipTurnRequest skipTurn) {
     universityWelfareService.skipTurn(skipTurn.getDoctorId(), skipTurn.getSpeciality());
@@ -222,6 +230,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasAnyRole('SECRETARIA_MEDICA', 'ADMINISTRATIVO')")
   @PostMapping("/enable")
   public ResponseEntity<ApiResponse<Void>> enableTurns() {
     universityWelfareService.enableTurns();
@@ -239,6 +248,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasAnyRole('SECRETARIA_MEDICA', 'ADMINISTRATIVO')")
   @PostMapping("/disable")
   public ResponseEntity<ApiResponse<Void>> disableTurns() {
     universityWelfareService.disableTurns();
@@ -260,6 +270,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasAnyRole('SECRETARIA_MEDICA', 'ADMINISTRATIVO')")
   @PostMapping("/enable/{speciality}")
   public ResponseEntity<ApiResponse<Void>> enableTurns(@PathVariable SpecialityEnum speciality) {
     universityWelfareService.enableTurns(speciality);
@@ -281,6 +292,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasAnyRole('SECRETARIA_MEDICA', 'ADMINISTRATIVO')")
   @PostMapping("/disable/{speciality}")
   public ResponseEntity<ApiResponse<Void>> disableTurns(@PathVariable SpecialityEnum speciality) {
     universityWelfareService.disableTurns(speciality);
