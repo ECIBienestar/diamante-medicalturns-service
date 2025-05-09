@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy JAR app to Azure Web App - Back-Medicalturns-develop
+name: Build and deploy JAR app to Azure Web App - diamante-medicalturns-develop
 
 on:
   push:
@@ -52,15 +52,15 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_CE8F8451F7C241EFBC49F1E8CCF4C5D9 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_C791EC9C03FE4992A2AA9E091B683FFA }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_852BBA68BCE544888CBB531F24A63E90 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_F7033719B5AD4602A85CC5CF9A31F26E }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_5F15BF3E09E247ACB055B011AE4755C1 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_E30D60C12F4A4AE4BC7515BEEA7757ED }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'Back-Medicalturns-develop'
+          app-name: 'diamante-medicalturns-develop'
           slot-name: 'Production'
           package: '*.jar'
           
