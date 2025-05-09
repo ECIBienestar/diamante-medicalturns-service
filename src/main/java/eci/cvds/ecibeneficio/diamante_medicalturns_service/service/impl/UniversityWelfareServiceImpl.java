@@ -77,6 +77,12 @@ public class UniversityWelfareServiceImpl implements UniversityWelfareService {
   }
 
   @Override
+  public void skipTurn(String doctorId, SpecialityEnum speciality) {
+    Doctor doctor = getDoctor(doctorId);
+    turnService.skipTurn(speciality, doctor);
+  }
+
+  @Override
   public void disableTurns() {
     UniversityWelfare universityWelfare = universityWelfareRepository.getUniversityWelfare();
     universityWelfare.setDisableTurns(true);
