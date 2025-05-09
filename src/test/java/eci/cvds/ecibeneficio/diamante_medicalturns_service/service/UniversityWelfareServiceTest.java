@@ -2,6 +2,7 @@ package eci.cvds.ecibeneficio.diamante_medicalturns_service.service;
 
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateTurnRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.TurnResponse;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.exception.MedicalTurnsException;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Doctor;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Turn;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.UniversityWelfare;
@@ -168,4 +169,198 @@ class UniversityWelfareServiceTest {
         verify(universityWelfareRepository, times(1)).getUniversityWelfare();
         verify(universityWelfareRepository, times(1)).save(welfare);
     }
+
+    @Test
+    void testDisableTurnsBySpeciality_success() {
+        UniversityWelfare welfare = new UniversityWelfare();
+        welfare.setDisableTurns(false);
+
+        when(universityWelfareRepository.getUniversityWelfare()).thenReturn(welfare);
+
+        universityWelfareService.disableTurns(SpecialityEnum.MEDICINA_GENERAL);
+
+        verify(universityWelfareRepository).save(welfare);
+        assertTrue(welfare.getDisbaleTurnsBySpeciality().contains(SpecialityEnum.MEDICINA_GENERAL));
+    }
+
+    @Test
+    void testDisableTurnsBySpeciality_alreadyDisabled() {
+        UniversityWelfare welfare = new UniversityWelfare();
+        welfare.setDisableTurns(true);
+
+        when(universityWelfareRepository.getUniversityWelfare()).thenReturn(welfare);
+
+        assertThrows(MedicalTurnsException.class, () ->
+                universityWelfareService.disableTurns(SpecialityEnum.MEDICINA_GENERAL)
+        );
+    }
+
+    @Test
+    void testEnableTurnsBySpeciality_success() {
+        UniversityWelfare welfare = new UniversityWelfare();
+        welfare.setDisableTurns(false);
+        welfare.disableTurns(SpecialityEnum.PSICOLOGIA);
+
+        when(universityWelfareRepository.getUniversityWelfare()).thenReturn(welfare);
+
+        universityWelfareService.enableTurns(SpecialityEnum.PSICOLOGIA);
+
+        verify(universityWelfareRepository).save(welfare);
+        assertFalse(welfare.getDisbaleTurnsBySpeciality().contains(SpecialityEnum.PSICOLOGIA));
+    }
+
+    @Test
+    void testEnableTurnsBySpeciality_globallyDisabled() {
+        UniversityWelfare welfare = new UniversityWelfare();
+        welfare.setDisableTurns(true);
+
+        when(universityWelfareRepository.getUniversityWelfare()).thenReturn(welfare);
+
+        assertThrows(MedicalTurnsException.class, () ->
+                universityWelfareService.enableTurns(SpecialityEnum.ODONTOLOGIA)
+        );
+    }
+
+    @Test
+    void testCallNextTurnById_success() {
+        Doctor doctor = new Doctor();
+        Turn turn = new Turn();
+
+        // Agregar usuario simulado al Turn
+        User user = new User();
+        user.setId("user1");
+        user.setName("Juan Pérez");
+        user.setRole(RoleEnum.ESTUDIANTE);
+
+        turn.setUser(user);
+        turn.setCode("T001");
+        turn.setSpeciality(SpecialityEnum.MEDICINA_GENERAL);
+        turn.setDate(LocalDateTime.now());
+
+        Long turnId = 1L;
+
+        when(userService.getUser("doc1")).thenReturn(Optional.of(doctor));
+        when(turnService.getTurn(turnId)).thenReturn(turn);
+        when(turnService.startTurn(turn)).thenReturn(turn);
+
+        TurnResponse response = universityWelfareService.callNextTurn("doc1", turnId, SpecialityEnum.MEDICINA_GENERAL, 1);
+
+        verify(turnService).finishTurn(SpecialityEnum.MEDICINA_GENERAL, 1, doctor);
+        assertNotNull(response);
+        assertEquals("T001", response.getCode());
+        assertEquals("Juan Pérez", response.getUserName());
+    }
+
+
+    @Test
+    void testCallNextTurn_success() {
+        Doctor doctor = new Doctor();
+
+        User user = new User();
+        user.setId("user1");
+        user.setName("Ana");
+
+        Turn nextTurn = new Turn();
+        nextTurn.setCode("CODE123");
+        nextTurn.setUser(user);
+
+        when(userService.getUser("doc1")).thenReturn(Optional.of(doctor));
+        when(turnService.startNextTurn(SpecialityEnum.ODONTOLOGIA)).thenReturn(nextTurn);
+
+        TurnResponse response = universityWelfareService.callNextTurn("doc1", SpecialityEnum.ODONTOLOGIA, 2);
+
+        verify(turnService).finishTurn(SpecialityEnum.ODONTOLOGIA, 2, doctor);
+        assertNotNull(response);
+        assertEquals("CODE123", response.getCode());
+        assertEquals("Ana", response.getUserName());
+    }
+
+
+    @Test
+    void testAddTurn_success() {
+        CreateTurnRequest request = new CreateTurnRequest();
+        request.setPriority(PriorityEnum.DISCAPACIDAD);
+        request.setSpeciality(SpecialityEnum.PSICOLOGIA);
+
+        // Simular usuario
+        User user = new User();
+        user.setId("123");
+        user.setName("Juan Pérez");
+
+        // Simular turno con usuario
+        Turn turn = new Turn();
+        turn.setCode("T1");
+        turn.setUser(user);
+
+        when(universityWelfareRepository.getUniversityWelfare()).thenReturn(new UniversityWelfare());
+        when(turnService.createTurn(request)).thenReturn(turn);
+
+        TurnResponse response = universityWelfareService.addTurn(request);
+
+        assertEquals("T1", response.getCode());
+        assertEquals("Juan Pérez", response.getUserName());
+    }
+
+
+    @Test
+    void testAddTurn_whenGlobalDisabled() {
+        UniversityWelfare welfare = new UniversityWelfare();
+        welfare.setDisableTurns(true);
+
+        when(universityWelfareRepository.getUniversityWelfare()).thenReturn(welfare);
+
+        CreateTurnRequest request = new CreateTurnRequest();
+        request.setSpeciality(SpecialityEnum.MEDICINA_GENERAL);
+
+        assertThrows(MedicalTurnsException.class, () -> universityWelfareService.addTurn(request));
+    }
+
+    @Test
+    void testGetAllTurns() {
+        User user = new User();
+        user.setId("123");
+        user.setName("Juan");
+        user.setRole(RoleEnum.ESTUDIANTE);
+
+        Turn turn1 = new Turn();
+        turn1.setUser(user);
+        turn1.setCode("T1");
+        turn1.setSpeciality(SpecialityEnum.MEDICINA_GENERAL);
+        turn1.setDate(LocalDateTime.now());
+
+        Turn turn2 = new Turn();
+        turn2.setUser(user);
+        turn2.setCode("T2");
+        turn2.setSpeciality(SpecialityEnum.PSICOLOGIA);
+        turn2.setDate(LocalDateTime.now());
+
+        when(turnService.getTurns()).thenReturn(List.of(turn1, turn2));
+
+        List<TurnResponse> responses = universityWelfareService.getTurns();
+
+        assertEquals(2, responses.size());
+        assertEquals("Juan", responses.get(0).getUserName());
+    }
+
+
+    @Test
+    void testGetLastCurrentTurn() {
+        User user = new User();
+        user.setId("user123");
+        user.setName("John Doe");
+
+        Turn turn = new Turn();
+        turn.setCode("ULTIMO");
+        turn.setUser(user); // <-- Aquí está la solución
+
+        when(turnService.getLastCurrentTurn()).thenReturn(Optional.of(turn));
+
+        Optional<TurnResponse> response = universityWelfareService.getLastCurrentTurn();
+
+        assertTrue(response.isPresent());
+        assertEquals("ULTIMO", response.get().getCode());
+        assertEquals("John Doe", response.get().getUserName()); // Verificamos que no haya NullPointer
+    }
+
+
 }
