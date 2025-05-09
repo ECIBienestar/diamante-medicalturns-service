@@ -5,10 +5,7 @@ import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.SpecialitySeque
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.SpecialitySequenceRepository;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.SpecialitySequenceService;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.SpecialityEnum;
-import java.util.List;
 import lombok.AllArgsConstructor;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -31,10 +28,10 @@ public class SpecialitySequenceServiceImpl implements SpecialitySequenceService 
   }
 
   @Override
-  @Modifying
-  @Query("UPDATE SpecialitySequence seq SET seq.sequence = 0")
   @Scheduled(cron = "0 0 0 * * *", zone = "America/Bogota")
-  public void restartSequences() {}
+  public void restartSequences() {
+    specialitySequenceRepository.resetSequences();
+  }
 
   private SpecialitySequence getSpecialitySequence(SpecialityEnum speciality) {
     return specialitySequenceRepository
