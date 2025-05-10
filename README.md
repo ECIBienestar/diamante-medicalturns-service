@@ -54,7 +54,7 @@ expuesto mediante un **API Gateway** que gestiona la autenticación y el enrutam
 
 #### 🔗 Diagrama de Microservicios
 
-![microservicios](<assets/imgs/Diagrama de Microservicios.png>)
+![microservicios](<assets/imgs/diagrams/microservices.png>)
 
 ### 🏗️ Estilo Arquitectónico
 
@@ -76,14 +76,14 @@ integración con tablets para asignación física de turnos y módulos visuales 
 
 - [ ] Diagrama de Clases
 
-![Diagrama de Clases](<assets/imgs/Diagrama de Clases v2.jpg>)
+![Diagrama de Clases](<assets/imgs/diagrams/class.jpg>)
 
 Astha Diagrama de
 clases: [Astha Diagrama de clases](<assets/docs/diamante_medicalturns_service - Diagrama de clases.asta>)
 
 - [ ] Diagrama de Componentes
 
-![Diagrama de Componentes](<assets/imgs/Diagrama de Componentes Generales.png>)
+![Diagrama de Componentes](<assets/imgs/diagrams/components.jpg>)
 
 - [ ] Diagrama de Secuencia
 
@@ -91,7 +91,7 @@ clases: [Astha Diagrama de clases](<assets/docs/diamante_medicalturns_service - 
 
 - [ ] Diagrama de Datos
 
-![Diagrama de Datos](<assets/imgs/Diagrama de Datos v2.jpg>)
+![Diagrama de Datos](<assets/imgs/diagrams/data.jpg>)
 
 ---
 
