@@ -2,8 +2,11 @@
 
 ## 📌 Descripción del Módulo
 
-Este módulo permite a los miembros de la comunidad universitaria (estudiantes, docentes, administrativos y personal de servicios generales) gestionar y visualizar turnos para atención en los servicios de bienestar institucional: medicina general, odontología y psicología.  
-El sistema contempla la asignación de turnos desde tablets de autoservicio, control administrativo por parte del personal autorizado y seguimiento por parte de los profesionales de la salud.
+Este módulo permite a los miembros de la comunidad universitaria (estudiantes, docentes, administrativos y personal de
+servicios generales) gestionar y visualizar turnos para atención en los servicios de bienestar institucional: medicina
+general, odontología y psicología.  
+El sistema contempla la asignación de turnos desde tablets de autoservicio, control administrativo por parte del
+personal autorizado y seguimiento por parte de los profesionales de la salud.
 
 ---
 
@@ -12,7 +15,6 @@ El sistema contempla la asignación de turnos desde tablets de autoservicio, con
 - **Java 17**
 - **Spring Boot**
 - **PostgreSQL**
-- **Apache Kafka**
 - **Spring Cloud Bus**
 - **JWT (JSON Web Token)**
 - **Lombok**
@@ -25,34 +27,34 @@ El sistema contempla la asignación de turnos desde tablets de autoservicio, con
 
 ### 🔗 Interacción con Otros Módulos
 
-El módulo opera como un microservicio independiente, orquestado dentro de una arquitectura basada en microservicios y expuesto mediante un **API Gateway** que gestiona la autenticación y el enrutamiento de peticiones.
+El módulo opera como un microservicio independiente, orquestado dentro de una arquitectura basada en microservicios y
+expuesto mediante un **API Gateway** que gestiona la autenticación y el enrutamiento de peticiones.
 
 #### 🔄 Flujo General de Interacción:
 
 1. **Cliente (Web/Móvil)**: Envía solicitudes para turnos médicos al **API Gateway**.
 2. **API Gateway**:
-   - Obtiene un token JWT desde el **Auth Service**.
-   - Valida el token y enruta la petición al microservicio correspondiente.
+    - Obtiene un token JWT desde el **Auth Service**.
+    - Valida el token y enruta la petición al microservicio correspondiente.
 3. **Medical Shifts Service**:
-   - Verifica el usuario y sus roles a través del **Users Service**.
-   - Procesa la solicitud, registra la información en su base de datos y emite eventos al **Bus de Eventos**.
+    - Verifica el usuario y sus roles a través del **Users Service**.
+    - Procesa la solicitud, registra la información en su base de datos y emite eventos al **Bus de Eventos**.
 4. **Estadistics Service**:
-   - Consume los eventos generados para generar reportes históricos y estadísticas de atención.
+    - Consume los eventos generados para generar reportes históricos y estadísticas de atención.
 
 #### 🧩 Servicios Relacionados
 
 | Servicio                | Descripción                                            |
-| ----------------------- | ------------------------------------------------------ |
+|-------------------------|--------------------------------------------------------|
 | **Auth Service**        | Autenticación y emisión de tokens JWT                  |
 | **API Gateway**         | Enrutamiento y control de acceso                       |
 | **Users Service**       | Consulta y validación de usuarios                      |
 | **Estadistics Service** | Registro histórico y generación de reportes            |
 | **Event Bus**           | Middleware de eventos asincrónicos (Kafka + Cloud Bus) |
 
-
 #### 🔗 Diagrama de Microservicios
-![microservicios](<assets/imgs/Diagrama de Microservicios.png>)
 
+![microservicios](<assets/imgs/Diagrama de Microservicios.png>)
 
 ### 🏗️ Estilo Arquitectónico
 
@@ -60,7 +62,9 @@ El módulo opera como un microservicio independiente, orquestado dentro de una a
 
 ### ⚙️ Funcionamiento Interno
 
-El **MOD-LLL-001: Módulo de Turnos Médicos** expone una API RESTful para gestionar la creación, consulta y modificación de turnos. Utiliza autenticación basada en JWT y eventos distribuidos para la comunicación entre servicios. Incluye integración con tablets para asignación física de turnos y módulos visuales para pantallas de atención.
+El **MOD-LLL-001: Módulo de Turnos Médicos** expone una API RESTful para gestionar la creación, consulta y modificación
+de turnos. Utiliza autenticación basada en JWT y eventos distribuidos para la comunicación entre servicios. Incluye
+integración con tablets para asignación física de turnos y módulos visuales para pantallas de atención.
 
 > 🔍 _Más detalles disponibles en el documento de análisis de requerimientos._
 
@@ -74,31 +78,19 @@ El **MOD-LLL-001: Módulo de Turnos Médicos** expone una API RESTful para gesti
 
 ![Diagrama de Clases](<assets/imgs/Diagrama de Clases v2.jpg>)
 
-Astha Diagrama de clases: [Astha Diagrama de clases](<assets/docs/diamante_medicalturns_service - Diagrama de clases.asta>)
-
-- [ ] Diagrama de Componentes Generales
-
-![Diagrama de Componentes](<assets/imgs/Diagrama de Componentes Generales.png>)
+Astha Diagrama de
+clases: [Astha Diagrama de clases](<assets/docs/diamante_medicalturns_service - Diagrama de clases.asta>)
 
 - [ ] Diagrama de Componentes
 
-1. Turn Management Service
-
-![Turn Management Service](<assets/imgs/Diagrama de Componentes 1.png>)
-2. Multimedia Management Service  
-
-![Multimedia Management Service](<assets/imgs/Diagrama de Componentes 2.png>)
-3. Report Service  
-   
-![Report Service](<assets/imgs/Diagrama de Componentes 3.png>)
-
+![Diagrama de Componentes](<assets/imgs/Diagrama de Componentes Generales.png>)
 
 - [ ] Diagrama de Secuencia
 
   > Aun por Definir
 
 - [ ] Diagrama de Datos
-      
+
 ![Diagrama de Datos](<assets/imgs/Diagrama de Datos v2.jpg>)
 
 ---
@@ -107,27 +99,18 @@ Astha Diagrama de clases: [Astha Diagrama de clases](<assets/docs/diamante_medic
 
 ### 📡 Endpoints REST
 
-- [ ] Endpoints para bienestar universitario  
+Puedes consumir el API ya desplegado accediendo a su documentación en línea:
 
-![Diagrama de Datos](<assets/imgs/University welfare endpoints.png>)
+- **Swagger en Azure:**
 
-- [ ] Endpoints para contenido informativo  
-
-![Diagrama de Datos](<assets/imgs/Multimedia endpoints.png>)
-
-- [ ] Endpoints para reportes  
-  
-![Diagrama de Datos](<assets/imgs/Report endpoints.png>)
-
-Swagger: [Swagger UI](http://localhost:8080/swagger-ui.html)
-
-**📌 Nota:** Mas adelante se desplegara para que pueda ser accesible.
-
+```
+https://diamante-medicalturns-develop-dvb8c2cqfbh4gwbg.canadacentral-01.azurewebsites.net/swagger-ui/index.html
+```  
 
 ### 😊 Happy Path
 
 | Escenario                               | Resultado esperado                                                  |
-| --------------------------------------- | ------------------------------------------------------------------- |
+|-----------------------------------------|---------------------------------------------------------------------|
 | Crear un nuevo turno                    | Se registra el turno y se devuelve el turno creado                  |
 | Obtener lista de turnos disponibles     | Se devuelve una lista actualizada de turnos                         |
 | Eliminar un turno existente             | Se elimina correctamente y se confirma la operación                 |
@@ -149,7 +132,7 @@ Swagger: [Swagger UI](http://localhost:8080/swagger-ui.html)
 ### 🚨 Manejo de Errores
 
 | Código | Mensaje de error             | Causa probable                         |
-| ------ | ---------------------------- | -------------------------------------- |
+|--------|------------------------------|----------------------------------------|
 | 400    | "Datos de entrada inválidos" | Validaciones fallidas en el formulario |
 | 401    | "Usuario no autenticado"     | Token inválido o ausente               |
 | 404    | "Turnos no disponibles"      | Los turnos están deshabilitados        |
@@ -161,7 +144,7 @@ Swagger: [Swagger UI](http://localhost:8080/swagger-ui.html)
 ## 📬 Uso de Colas de Mensajería
 
 | Tópico Kafka | Evento Disparado | Resultado Esperado | Happy Path | Dead Letter Queue (DLQ) |
-| ------------ | ---------------- | ------------------ | ---------- | ----------------------- |
+|--------------|------------------|--------------------|------------|-------------------------|
 | x            | x                | x                  | x          | x                       |
 
 ---
@@ -172,9 +155,9 @@ Swagger: [Swagger UI](http://localhost:8080/swagger-ui.html)
   `src/test/java/eci/cvds/ecibeneficio/diamante_medicalturns_service`
 
 - Tecnologías utilizadas:
-  - **JUnit 5**
-  - **Mockito**
-  - **Spring Boot Test**
+    - **JUnit 5**
+    - **Mockito**
+    - **Spring Boot Test**
 
 ### ▶️ Ejecutar pruebas:
 
@@ -214,28 +197,14 @@ http://localhost:8080/swagger-ui.html
 
 ---
 
-### ☁️ Usando el despliegue en Azure
-
-Puedes consumir el API ya desplegado accediendo a su documentación en línea:
-
-- **Swagger en Azure:**
-
-```
-https://back-medicalturns-develop-aycucpewbafjhce5.mexicocentral-01.azurewebsites.net/swagger-ui.html
-```
-
-Este endpoint se encuentra protegido por autenticación JWT, por lo que deberás obtener un token desde el **Auth Service** antes de realizar peticiones.
-
----
-
 ## 🚀 Evidencia de CI/CD y Despliegue
 
-- El proyecto se encuentra desplegado en Azure.
-- Acceso a la API mediante Swagger:  
-  👉 [Ver en Azure](https://back-medicalturns-develop-aycucpewbafjhce5.mexicocentral-01.azurewebsites.net/swagger-ui.html)
+- El proyecto se encuentra desplegado en Azure.  
+  👉 [Despliegue para pruebas](diamante-medicalturns-develop-dvb8c2cqfbh4gwbg.canadacentral-01.azurewebsites.net)  
+  👉 [Despliegue para produccion](diamante-medicalturns-dzdja4b4bfayaqdk.canadacentral-01.azurewebsites.net)
 - Pipelines configurados:
-  - GitHub Actions para pruebas y builds
-  - Azure Pipelines para despliegue automático
+    - GitHub Actions para pruebas y builds
+    - Azure Pipelines para despliegue automático
 
 ---
 
