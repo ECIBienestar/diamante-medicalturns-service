@@ -58,7 +58,7 @@ expuesto mediante un **API Gateway** que gestiona la autenticación y el enrutam
 
 ### 🏗️ Estilo Arquitectónico
 
-[DOCUMENTO DE ARQUITECTURA BACKEND](<assets/docs/DOCUMENTO DE ARQUITECTURA BACKEND.pdf>)
+[DOCUMENTO DE ARQUITECTURA BACKEND](<assets/docs/Backend-architecture.pdf>)
 
 ### ⚙️ Funcionamiento Interno
 
@@ -68,7 +68,7 @@ integración con tablets para asignación física de turnos y módulos visuales 
 
 > 🔍 _Más detalles disponibles en el documento de análisis de requerimientos._
 
-[Análisis Requerimientos](<assets/docs/Análisis Requerimientos.pdf>)
+[Análisis Requerimientos](<assets/docs/Requirements-analysis.pdf>)
 
 ---
 
@@ -79,7 +79,7 @@ integración con tablets para asignación física de turnos y módulos visuales 
 ![Diagrama de Clases](<assets/imgs/diagrams/class.jpg>)
 
 Astha Diagrama de
-clases: [Astha Diagrama de clases](<assets/docs/diamante_medicalturns_service - Diagrama de clases.asta>)
+clases: [Astha Diagrama de clases](<assets/docs/Class-diagrams.asta>)
 
 - [ ] Diagrama de Componentes
 
@@ -87,7 +87,7 @@ clases: [Astha Diagrama de clases](<assets/docs/diamante_medicalturns_service - 
 
 - [ ] Diagrama de Secuencia
 
-  > Aun por Definir
+[Diagramas de secuencia](<assets/docs/Sequence-Diagrams.pdf>)
 
 - [ ] Diagrama de Datos
 
