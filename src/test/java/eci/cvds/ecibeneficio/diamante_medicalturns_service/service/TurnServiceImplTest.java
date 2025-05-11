@@ -194,7 +194,7 @@ public class TurnServiceImplTest {
   void shouldReturnLastCurrentTurn() {
     turn.setStatus(StatusEnum.CURRENT);
 
-    when(turnRepository.findCurrentTurns(any(), any())).thenReturn(List.of(turn));
+    when(turnRepository.findLastCurrentTurn(any(), any())).thenReturn(List.of(turn));
 
     Optional<Turn> result = turnServiceImpl.getLastCurrentTurn();
 

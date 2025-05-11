@@ -83,7 +83,7 @@ public class TurnServiceImpl implements TurnService {
   public Optional<Turn> getLastCurrentTurn() {
     var timeRange = getTodayTimeRange();
 
-    return turnRepository.findCurrentTurns(timeRange.start, timeRange.end).stream().findFirst();
+    return turnRepository.findLastCurrentTurn(timeRange.start, timeRange.end).stream().findFirst();
   }
 
   @Override
@@ -140,6 +140,7 @@ public class TurnServiceImpl implements TurnService {
     }
 
     turn.setStatus(StatusEnum.CURRENT);
+    turn.setDateAttention(LocalDateTime.now());
     turnRepository.save(turn);
     turnRepository.flush();
 
