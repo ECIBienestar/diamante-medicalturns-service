@@ -91,7 +91,7 @@ clases: [Astha Diagrama de clases](<assets/docs/Class-diagrams.asta>)
 
 - [ ] Diagrama de Datos
 
-![Diagrama de Datos](<assets/imgs/diagrams/data.jpg>)
+![Diagrama de Datos](<assets/imgs/diagrams/data.png>)
 
 ---
 
