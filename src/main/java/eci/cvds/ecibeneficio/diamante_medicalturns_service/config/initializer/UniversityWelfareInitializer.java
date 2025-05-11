@@ -15,10 +15,6 @@ public class UniversityWelfareInitializer {
   public void init() {
     universityWelfareRepository
         .findById(1)
-        .orElseGet(
-            () -> {
-              UniversityWelfare universityWelfare = new UniversityWelfare(1);
-              return universityWelfareRepository.save(universityWelfare);
-            });
+        .orElseGet(() -> universityWelfareRepository.save(new UniversityWelfare(1)));
   }
 }

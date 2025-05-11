@@ -36,7 +36,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class TurnServiceImplTest {
+class TurnServiceImplTest {
   @Mock private TurnRepository turnRepository;
   @Mock private UserRepository userRepository;
   @Mock private UserService userService;
@@ -110,11 +110,11 @@ public class TurnServiceImplTest {
         .thenReturn(Optional.empty());
     when(turnRepository.save(any(Turn.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-    Turn turn = turnServiceImpl.createTurn(createTurnRequest);
+    Turn newTurn = turnServiceImpl.createTurn(createTurnRequest);
 
-    assertNotNull(turn);
-    assertEquals(user, turn.getUser());
-    assertEquals(SpecialityEnum.MEDICINA_GENERAL, turn.getSpeciality());
+    assertNotNull(newTurn);
+    assertEquals(user, newTurn.getUser());
+    assertEquals(SpecialityEnum.MEDICINA_GENERAL, newTurn.getSpeciality());
 
     verify(userService, times(2)).getUser(user.getId());
     verify(userService, times(1)).createUser(createUserRequest);
@@ -162,7 +162,7 @@ public class TurnServiceImplTest {
 
   @Test
   void shouldGetTurnById() {
-    when(turnRepository.findById(eq(turn.getId()))).thenReturn(Optional.of(turn));
+    when(turnRepository.findById(turn.getId())).thenReturn(Optional.of(turn));
 
     Turn turnFound = turnServiceImpl.getTurn(turn.getId());
 
@@ -194,7 +194,7 @@ public class TurnServiceImplTest {
   void shouldReturnLastCurrentTurn() {
     turn.setStatus(StatusEnum.CURRENT);
 
-    when(turnRepository.findCurrentTurns(any(), any())).thenReturn(List.of(turn));
+    when(turnRepository.findLastCurrentTurn(any(), any())).thenReturn(List.of(turn));
 
     Optional<Turn> result = turnServiceImpl.getLastCurrentTurn();
 
@@ -594,9 +594,9 @@ public class TurnServiceImplTest {
 
   private Turn getTurn() {
     dateTime = LocalDateTime.now();
-    Turn turn = new Turn(user, "M-0", SpecialityEnum.MEDICINA_GENERAL, dateTime);
-    turn.setId(1L);
+    Turn newTurn = new Turn(user, "M-0", SpecialityEnum.MEDICINA_GENERAL, dateTime);
+    newTurn.setId(1L);
 
-    return turn;
+    return newTurn;
   }
 }

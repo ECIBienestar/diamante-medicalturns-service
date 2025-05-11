@@ -12,16 +12,16 @@ import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.Specialit
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class UserFactoryImplTest {
+class UserFactoryImplTest {
   private UserFactoryImpl userFactory;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     userFactory = new UserFactoryImpl();
   }
 
   @Test
-  public void testCreateSimpleUser() {
+  void testCreateSimpleUser() {
     CreateUserRequest request = new CreateUserRequest();
     request.setId("123");
     request.setName("Daniel Diaz");
@@ -37,7 +37,7 @@ public class UserFactoryImplTest {
   }
 
   @Test
-  public void testCreateDoctor() {
+  void testCreateDoctor() {
     CreateDoctorRequest request = new CreateDoctorRequest();
     request.setId("123");
     request.setName("Daniel Diaz");

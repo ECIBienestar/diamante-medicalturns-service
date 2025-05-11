@@ -1,7 +1,6 @@
 package eci.cvds.ecibeneficio.diamante_medicalturns_service.model;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.PriorityEnum;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.RoleEnum;
@@ -11,14 +10,14 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class TurnTest {
+class TurnTest {
   private User user;
   private Doctor doctor;
   private LocalDateTime date;
   private Turn turn;
 
   @BeforeEach
-  public void setUp() {
+   void setUp() {
     user = new User("1", "Daniel", RoleEnum.ESTUDIANTE);
     doctor = new Doctor("2", "Carlos", RoleEnum.DOCTOR, SpecialityEnum.MEDICINA_GENERAL);
     date = LocalDateTime.of(2025, 5, 10, 10, 0);
@@ -44,12 +43,13 @@ public class TurnTest {
 
   @Test
   void shouldReturnFalseWhenComparedWithNull() {
-    assertNotEquals(turn, null);
+    assertNotEquals(null, turn);
   }
 
   @Test
   void shouldReturnFalseWhenComparedWithDifferentClass() {
-    assertNotEquals(turn, "not a Turn");
+    Object otherObject = "not a Turn";
+    assertNotEquals(otherObject, turn);
   }
 
   @Test
@@ -116,12 +116,12 @@ public class TurnTest {
   }
 
   private Turn createTurn() {
-    Turn turn = new Turn(user, "M-0", SpecialityEnum.MEDICINA_GENERAL, date);
-    turn.setDoctor(doctor);
-    turn.setPriority(PriorityEnum.DISCAPACIDAD);
-    turn.setStatus(StatusEnum.PENDING);
-    turn.setLevelAttention(1);
+    Turn newTurn = new Turn(user, "M-0", SpecialityEnum.MEDICINA_GENERAL, date);
+    newTurn.setDoctor(doctor);
+    newTurn.setPriority(PriorityEnum.DISCAPACIDAD);
+    newTurn.setStatus(StatusEnum.PENDING);
+    newTurn.setLevelAttention(1);
 
-    return turn;
+    return newTurn;
   }
 }

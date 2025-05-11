@@ -190,7 +190,7 @@ herramienta útil tanto para desarrolladores como para analistas funcionales.
 
 - [ ] Diagrama de Datos
 
-![Diagrama de Datos](<assets/imgs/diagrams/data.jpg>)
+![Diagrama de Datos](<assets/imgs/diagrams/data.png>)
 
 El sistema utiliza una base de datos relacional (**PostgreSQL**) cuyo modelo representa las entidades clave involucradas
 en la gestión de turnos dentro del contexto de bienestar universitario.

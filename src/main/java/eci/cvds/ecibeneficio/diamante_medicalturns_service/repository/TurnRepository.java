@@ -40,8 +40,8 @@ public interface TurnRepository extends JpaRepository<Turn, Long> {
       @Param("speciality") SpecialityEnum speciality);
 
   @Query(
-      "SELECT t FROM Turn t WHERE t.date BETWEEN :startOfDay AND :endOfDay AND t.status = eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.StatusEnum.CURRENT ORDER BY t.date DESC")
-  List<Turn> findCurrentTurns(
+      "SELECT t FROM Turn t WHERE t.date BETWEEN :startOfDay AND :endOfDay AND t.status = eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.StatusEnum.CURRENT ORDER BY t.dateAttention DESC")
+  List<Turn> findLastCurrentTurn(
       @Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
 
   @Query(

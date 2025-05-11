@@ -10,16 +10,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-public class GlobalHandlerExceptionTest {
-  private GlobalHandlerException handlerException;
+class GlobalExceptionHandlerTest {
+  private GlobalExceptionHandler handlerException;
 
   @BeforeEach
-  public void setUp() {
-    handlerException = new GlobalHandlerException();
+  void setUp() {
+    handlerException = new GlobalExceptionHandler();
   }
 
   @Test
-  public void shouldHandleMedicalTurnsException() {
+  void shouldHandleMedicalTurnsException() {
     String message = MedicalTurnsException.USER_HAVE_TURN;
     MedicalTurnsException ex = new MedicalTurnsException(message);
 
@@ -33,7 +33,7 @@ public class GlobalHandlerExceptionTest {
   }
 
   @Test
-  public void shouldHandleConstraintViolationException() {
+  void shouldHandleConstraintViolationException() {
     String message = "Invalid input";
     ConstraintViolationException ex = new ConstraintViolationException(message, null);
 
@@ -47,7 +47,7 @@ public class GlobalHandlerExceptionTest {
   }
 
   @Test
-  public void shouldHandleAccessDeniedException() {
+  void shouldHandleAccessDeniedException() {
     AccessDeniedException ex = new AccessDeniedException("Forbidden access");
 
     ResponseEntity<ApiResponse<Void>> response = handlerException.handleAccessDenied(ex);
@@ -60,7 +60,7 @@ public class GlobalHandlerExceptionTest {
   }
 
   @Test
-  public void shouldHandleGenericException() {
+  void shouldHandleGenericException() {
     Exception ex = new RuntimeException("Unexpected error");
 
     ResponseEntity<ApiResponse<Void>> response = handlerException.handleGenericException(ex);
