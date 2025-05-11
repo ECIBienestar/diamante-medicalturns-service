@@ -10,14 +10,14 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class TurnTest {
+class TurnTest {
   private User user;
   private Doctor doctor;
   private LocalDateTime date;
   private Turn turn;
 
   @BeforeEach
-  public void setUp() {
+   void setUp() {
     user = new User("1", "Daniel", RoleEnum.ESTUDIANTE);
     doctor = new Doctor("2", "Carlos", RoleEnum.DOCTOR, SpecialityEnum.MEDICINA_GENERAL);
     date = LocalDateTime.of(2025, 5, 10, 10, 0);
