@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-public class GlobalHandlerExceptionTest {
-  private GlobalHandlerException handlerException;
+public class GlobalExceptionHandlerTest {
+  private GlobalExceptionHandler handlerException;
 
   @BeforeEach
   public void setUp() {
-    handlerException = new GlobalHandlerException();
+    handlerException = new GlobalExceptionHandler();
   }
 
   @Test
