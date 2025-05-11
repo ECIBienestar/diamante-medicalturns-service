@@ -12,18 +12,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-public class SpecialitySequenceInitializerTest {
+class SpecialitySequenceInitializerTest {
   private SpecialitySequenceRepository specialitySequenceRepository;
   private SpecialitySequenceInitializer initializer;
 
   @BeforeEach
-  public void init() {
+  void init() {
     specialitySequenceRepository = mock(SpecialitySequenceRepository.class);
     initializer = new SpecialitySequenceInitializer(specialitySequenceRepository);
   }
 
   @Test
-  public void shouldInitializeSequences() {
+  void shouldInitializeSequences() {
     when(specialitySequenceRepository.findById(SpecialityEnum.MEDICINA_GENERAL))
         .thenReturn(Optional.of(new SpecialitySequence(SpecialityEnum.MEDICINA_GENERAL, 5)));
 

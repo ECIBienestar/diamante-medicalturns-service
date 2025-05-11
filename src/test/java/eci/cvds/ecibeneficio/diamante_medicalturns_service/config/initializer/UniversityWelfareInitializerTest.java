@@ -10,18 +10,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-public class UniversityWelfareInitializerTest {
+class UniversityWelfareInitializerTest {
   private UniversityWelfareRepository universityWelfareRepository;
   private UniversityWelfareInitializer initializer;
 
   @BeforeEach
-  public void init() {
+  void init() {
     universityWelfareRepository = mock(UniversityWelfareRepository.class);
     initializer = new UniversityWelfareInitializer(universityWelfareRepository);
   }
 
   @Test
-  public void shouldNotSaveIfUniversityWelfareExists() {
+  void shouldNotSaveIfUniversityWelfareExists() {
     when(universityWelfareRepository.findById(1)).thenReturn(Optional.of(new UniversityWelfare(1)));
 
     initializer.init();
@@ -30,7 +30,7 @@ public class UniversityWelfareInitializerTest {
   }
 
   @Test
-  public void shouldSaveIfUniversityWelfareDoesNotExist() {
+  void shouldSaveIfUniversityWelfareDoesNotExist() {
     when(universityWelfareRepository.findById(1)).thenReturn(Optional.empty());
 
     initializer.init();

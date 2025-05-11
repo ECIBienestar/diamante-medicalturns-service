@@ -36,7 +36,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class TurnServiceImplTest {
+class TurnServiceImplTest {
   @Mock private TurnRepository turnRepository;
   @Mock private UserRepository userRepository;
   @Mock private UserService userService;
@@ -162,7 +162,7 @@ public class TurnServiceImplTest {
 
   @Test
   void shouldGetTurnById() {
-    when(turnRepository.findById(eq(turn.getId()))).thenReturn(Optional.of(turn));
+    when(turnRepository.findById(turn.getId())).thenReturn(Optional.of(turn));
 
     Turn turnFound = turnServiceImpl.getTurn(turn.getId());
 
