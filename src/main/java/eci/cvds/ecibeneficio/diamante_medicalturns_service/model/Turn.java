@@ -32,6 +32,7 @@ public class Turn {
   private LocalDateTime date;
   private StatusEnum status = StatusEnum.PENDING;
   private int levelAttention;
+  private LocalDateTime dateAttention;
 
   public Turn(User user, String code, SpecialityEnum speciality, LocalDateTime date) {
     this.user = user;
@@ -51,11 +52,13 @@ public class Turn {
         && speciality == turn.speciality
         && priority == turn.priority
         && Objects.equals(date, turn.date)
-        && status == turn.status;
+        && status == turn.status
+        && Objects.equals(dateAttention, turn.dateAttention);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(user, doctor, code, speciality, priority, date, status, levelAttention);
+    return Objects.hash(
+        user, doctor, code, speciality, priority, date, status, levelAttention, dateAttention);
   }
 }

@@ -4,6 +4,9 @@ import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.TurnResp
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Turn;
 
 public class TurnMapper {
+
+  private TurnMapper() {}
+
   public static TurnResponse toResponse(Turn turn) {
     return new TurnResponse(
         turn.getCode(), turn.getUser().getName(), turn.getSpeciality(), turn.getDate());

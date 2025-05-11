@@ -14,12 +14,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-public class SpecialitySequenceServiceImplTest {
+class SpecialitySequenceServiceImplTest {
   private SpecialitySequenceRepository repository;
   private SpecialitySequenceServiceImpl service;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     repository = mock(SpecialitySequenceRepository.class);
     service = new SpecialitySequenceServiceImpl(repository);
   }
