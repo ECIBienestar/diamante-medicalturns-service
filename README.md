@@ -78,6 +78,47 @@ integración con tablets para asignación física de turnos y módulos visuales 
 
 ![Diagrama de Clases](<assets/imgs/diagrams/class.jpg>)
 
+El diagrama de clases representa las principales entidades involucradas en la gestión de turnos en el contexto de
+bienestar universitario.  
+Cada clase encapsula atributos y relaciones específicas para reflejar el comportamiento y la estructura del sistema.
+
+### Clases Principales
+
+### `User`
+
+- Representa a los usuarios que pueden solicitar turnos.
+- **Atributos**: `id`, `name`, `role`
+- **Relaciones**: Tiene una relación con la clase `Turn` como paciente.
+
+### `Doctor`
+
+- Representa a los profesionales encargados de atender turnos.
+- **Atributos**: `userId`, `speciality`
+- **Relaciones**: Se relaciona con un `User` y está asociado a una especialidad médica.
+
+### `Turn`
+
+- Contiene la información de los turnos asignados o solicitados.
+- **Atributos**: `id`, `code`, `date`, `levelAttention`, `priority`, `speciality`, `status`, `dateAttention`
+- **Asociaciones**:
+    - Un `Doctor` que atiende el turno.
+    - Un `User` que solicita el turno.
+
+### `UniversityWelfare`
+
+- Contiene configuraciones relacionadas con la disponibilidad de turnos.
+- **Atributos**: `id`, `disableTurns`, `disableTurnsBySpeciality` (lista de especialidades deshabilitadas)
+
+### `Multimedia`
+
+- Gestiona contenido informativo relacionado al servicio.
+- **Atributos**: `id`, `name`, `type`, `url`, `duration`
+
+### `SpecialitySequence`
+
+- Lleva el control de la numeración secuencial de turnos por especialidad.
+- **Atributos**: `id`, `speciality`, `sequence`
+
 Astha Diagrama de
 clases: [Astha Diagrama de clases](<assets/docs/Class-diagrams.asta>)
 
@@ -85,13 +126,126 @@ clases: [Astha Diagrama de clases](<assets/docs/Class-diagrams.asta>)
 
 ![Diagrama de Componentes](<assets/imgs/diagrams/components.jpg>)
 
+El siguiente diagrama de componentes permite evidenciar el flujo completo y la estructura funcional del sistema *
+*MedicalTurns**, abarcando desde la interfaz de usuario hasta la integración con servicios externos.
+
+### Componentes Principales
+
+### `UniversityWelfareService`
+
+- Se encarga de la gestión de turnos, incluyendo su creación y actualización.
+
+### `ReportService`
+
+- Recopila y envía los datos necesarios para el análisis estadístico.
+- Esta información es procesada por el servicio externo `bismuto-statistics-service`, el cual genera las estadísticas
+  cuando son solicitadas.
+
+### `MultimediaService`
+
+- Administra los elementos multimedia del módulo, como imágenes y videos.
+- Se apoya en el `MultimediaController` para exponer estos recursos a través de la API.
+
+
 - [ ] Diagrama de Secuencia
 
 [Diagramas de secuencia](<assets/docs/Sequence-Diagrams.pdf>)
 
+En esta sección se documentan los distintos **diagramas de secuencia** que describen la interacción entre componentes
+del sistema a lo largo del tiempo, específicamente en los flujos clave definidos para cada módulo funcional. Estos
+diagramas son fundamentales para visualizar cómo los distintos servicios, controladores y entidades colaboran para
+cumplir con los casos de uso definidos.
+
+### Organización de los Diagramas
+
+Los diagramas de secuencia están organizados en carpetas bajo el directorio `sequence-diagrams`, de acuerdo con los
+módulos funcionales y técnicos del sistema. La estructura sigue el patrón de **arquitectura de capas**:
+
+- `controller/`: contiene los diagramas centrados en las interacciones a nivel de API y controladores HTTP.
+- `service/`: contiene los diagramas que detallan la lógica de negocio y cómo los servicios internos del sistema
+  gestionan los procesos.
+
+Cada subcarpeta dentro de `controller` y `service` corresponde a un módulo específico del sistema:
+
+- `multimedia-controller` y `multimedia-service`  
+  Documentan los flujos relacionados con la carga, consulta y validación de archivos multimedia asociados a turnos
+  médicos o usuarios.
+
+- `report-controller`  
+  Contiene diagramas que representan la comunicación entre el sistema principal y el módulo externo de estadísticas y
+  reportes, así como la exposición de esos datos al usuario.
+
+- `university-welfare-controller` y `university-welfare-service`  
+  Representan las operaciones relacionadas con el bienestar universitario, incluyendo flujos de asistencia social o
+  seguimiento de estudiantes.
+
+- `turn-service`  
+  Incluye los diagramas para la gestión de turnos médicos, como la asignación, finalización (por asistencia o no
+  asistencia) y consulta de disponibilidad.
+
+---
+
+Estos diagramas permiten una comprensión clara del comportamiento del sistema en tiempo de ejecución y son una
+herramienta útil tanto para desarrolladores como para analistas funcionales.
+
 - [ ] Diagrama de Datos
 
 ![Diagrama de Datos](<assets/imgs/diagrams/data.png>)
+
+El sistema utiliza una base de datos relacional (**PostgreSQL**) cuyo modelo representa las entidades clave involucradas
+en la gestión de turnos dentro del contexto de bienestar universitario.
+
+A continuación, se describen las tablas principales y su propósito:
+
+### `app_user`
+
+Representa a los usuarios del sistema (como estudiantes o personal administrativo).  
+Aunque el sistema general cuenta con un módulo centralizado de autenticación, este microservicio almacena localmente la
+tabla `app_user` para evitar una dependencia directa, garantizando la **autonomía y resiliencia** del servicio, en
+conformidad con los principios de diseño de microservicios.
+
+### `doctor`
+
+Representa a los profesionales encargados de atender los turnos.  
+Está asociado directamente a un registro en `app_user` y contiene información adicional como la **especialidad médica**.
+
+### `turn`
+
+Registra los turnos solicitados por los usuarios, incluyendo atributos como:
+
+- Código
+- Fecha
+- Nivel de atención
+- Prioridad
+- Especialidad
+- Estado del turno
+
+Cada turno se asocia tanto a un usuario como a un doctor.
+
+### `university_welfare`
+
+Define la configuración general del servicio de bienestar universitario, incluyendo si los **turnos están habilitados o
+deshabilitados**.
+
+### `disable_turns_speciality`
+
+Relaciona las especialidades con los servicios de bienestar que tienen **turnos deshabilitados**.  
+Esta tabla permite representar múltiples especialidades deshabilitadas por instancia de bienestar, solventando la
+limitación de las bases de datos relacionales respecto al almacenamiento de listas.
+
+### `multimedia`
+
+Almacena contenido informativo como **videos o imágenes** relacionados con el servicio. Incluye atributos como:
+
+- Duración
+- Nombre
+- Tipo
+- URL
+
+### `speciality_sequence`
+
+Lleva un control de **numeración secuencial por especialidad**, lo que permite asignar un número de turno ordenado por
+tipo de atención médica.
 
 ---
 
