@@ -151,6 +151,22 @@ https://diamante-medicalturns-develop-dvb8c2cqfbh4gwbg.canadacentral-01.azureweb
 
 ## 🧪 Evidencia de Pruebas
 
+- Evidencia de cobertura:
+
+Como parte del aseguramiento de la calidad del software, se realizaron pruebas automatizadas enfocadas en validar el correcto funcionamiento de los componentes desarrollados. Para medir el alcance de dichas pruebas, se utilizó JaCoCo (Java Code Coverage), una herramienta que permite analizar qué porcentaje del código fuente ha sido ejecutado durante la ejecución de las pruebas.
+
+Además, se integró SonarQube para proporcionar un análisis más completo del estado del código, incluyendo métricas de cobertura, deuda técnica, duplicación de código y cumplimiento de buenas prácticas. Gracias a estas herramientas, se logró mantener una cobertura de pruebas superior al 90%, lo cual indica un alto nivel de validación automatizada sobre el código del sistema.
+
+Este nivel de cobertura no solo refleja un esfuerzo por garantizar la confiabilidad del software, sino que también facilita el mantenimiento futuro del proyecto al reducir la probabilidad de errores en funcionalidades ya implementadas.
+
+- Evidencia de cobertura JaCoCo:
+
+![alt text](assets/imgs/test/jacoco.jpg) 
+
+- Evidencia de cobertura SonarQube:
+
+![alt text](assets/imgs/test/sonar.jpg) 
+
 - Las pruebas están ubicadas en:  
   `src/test/java/eci/cvds/ecibeneficio/diamante_medicalturns_service`
 
@@ -158,6 +174,7 @@ https://diamante-medicalturns-develop-dvb8c2cqfbh4gwbg.canadacentral-01.azureweb
     - **JUnit 5**
     - **Mockito**
     - **Spring Boot Test**
+    - **SonarQube**
 
 ### ▶️ Ejecutar pruebas:
 
