@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateUserRequest;
-import eci.cvds.ecibeneficio.diamante_medicalturns_service.factory.UserFactory;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.User;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.UserRepository;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.impl.UserServiceImpl;
@@ -17,8 +16,6 @@ import org.mockito.*;
 class UserServiceTest {
 
   @Mock private UserRepository userRepository;
-
-  @Mock private UserFactory userFactory; // <- agregado
 
   @InjectMocks private UserServiceImpl userService;
 
@@ -39,11 +36,10 @@ class UserServiceTest {
 
   @Test
   void testCreateUser() {
-    when(userFactory.createUser(any(CreateUserRequest.class))).thenReturn(mockUser);
-
     userService.createUser(createUserRequest);
 
-    verify(userRepository, times(1)).save(mockUser);
+    ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+    verify(userRepository, times(1)).save(userCaptor.capture());
   }
 
   @Test
