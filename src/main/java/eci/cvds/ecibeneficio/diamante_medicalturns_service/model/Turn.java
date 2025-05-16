@@ -22,10 +22,6 @@ public class Turn {
   @JoinColumn(name = "user_id", referencedColumnName = "id")
   private User user;
 
-  @ManyToOne
-  @JoinColumn(name = "doctor_id", referencedColumnName = "id")
-  private Doctor doctor;
-
   private String code;
   private SpecialityEnum speciality;
   private PriorityEnum priority;
@@ -47,7 +43,6 @@ public class Turn {
     Turn turn = (Turn) o;
     return levelAttention == turn.levelAttention
         && Objects.equals(user, turn.user)
-        && Objects.equals(doctor, turn.doctor)
         && Objects.equals(code, turn.code)
         && speciality == turn.speciality
         && priority == turn.priority
@@ -59,6 +54,6 @@ public class Turn {
   @Override
   public int hashCode() {
     return Objects.hash(
-        user, doctor, code, speciality, priority, date, status, levelAttention, dateAttention);
+        user, code, speciality, priority, date, status, levelAttention, dateAttention);
   }
 }

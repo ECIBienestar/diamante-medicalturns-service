@@ -17,12 +17,11 @@ public interface UniversityWelfareService {
 
   Optional<TurnResponse> getLastCurrentTurn();
 
-  TurnResponse callNextTurn(String doctorId, SpecialityEnum speciality, int levelAttention);
+  TurnResponse callNextTurn(SpecialityEnum speciality, int levelAttention);
 
-  TurnResponse callNextTurn(
-      String doctorId, Long nextTurn, SpecialityEnum speciality, int levelAttention);
+  TurnResponse callNextTurn(Long nextTurn, SpecialityEnum speciality, int levelAttention);
 
-  void skipTurn(String doctorId, SpecialityEnum speciality);
+  void skipTurn(SpecialityEnum speciality);
 
   void disableTurns();
 

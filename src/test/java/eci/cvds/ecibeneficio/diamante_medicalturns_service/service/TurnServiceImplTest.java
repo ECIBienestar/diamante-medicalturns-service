@@ -8,12 +8,9 @@ import static org.mockito.Mockito.*;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateTurnRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateUserRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.exception.MedicalTurnsException;
-import eci.cvds.ecibeneficio.diamante_medicalturns_service.factory.UserFactory;
-import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Doctor;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Turn;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.User;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.TurnRepository;
-import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.UserRepository;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.projection.AverageLevelByRole;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.projection.AverageLevelBySpeciality;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.projection.CountByRole;
@@ -38,10 +35,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class TurnServiceImplTest {
   @Mock private TurnRepository turnRepository;
-  @Mock private UserRepository userRepository;
   @Mock private UserService userService;
   @Mock private SpecialitySequenceService specialitySequenceService;
-  @Mock private UserFactory userFactory;
 
   @InjectMocks private TurnServiceImpl turnServiceImpl;
 
@@ -216,31 +211,27 @@ class TurnServiceImplTest {
   @Test
   void shouldFinishCurrentTurn() {
     turn.setStatus(StatusEnum.CURRENT);
-    Doctor doctor = new Doctor();
 
     when(turnRepository.findCurrentTurn(any(), any(), eq(SpecialityEnum.MEDICINA_GENERAL)))
         .thenReturn(Optional.of(turn));
 
-    turnServiceImpl.finishTurn(SpecialityEnum.MEDICINA_GENERAL, 4, doctor);
+    turnServiceImpl.finishTurn(SpecialityEnum.MEDICINA_GENERAL, 4);
 
     assertEquals(StatusEnum.COMPLETED, turn.getStatus());
     assertEquals(4, turn.getLevelAttention());
-    assertEquals(doctor, turn.getDoctor());
   }
 
   @Test
   void shouldSkipCurrentTurn() {
     turn.setStatus(StatusEnum.CURRENT);
-    Doctor doctor = new Doctor();
 
     when(turnRepository.findCurrentTurn(any(), any(), eq(SpecialityEnum.MEDICINA_GENERAL)))
         .thenReturn(Optional.of(turn));
     when(turnRepository.save(turn)).thenReturn(turn);
 
-    turnServiceImpl.skipTurn(SpecialityEnum.MEDICINA_GENERAL, doctor);
+    turnServiceImpl.skipTurn(SpecialityEnum.MEDICINA_GENERAL);
 
     assertEquals(StatusEnum.FINISHED, turn.getStatus());
-    assertEquals(doctor, turn.getDoctor());
   }
 
   @Test

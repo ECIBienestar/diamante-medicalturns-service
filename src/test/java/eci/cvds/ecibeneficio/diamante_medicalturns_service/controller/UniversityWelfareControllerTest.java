@@ -8,7 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CallTurnRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateTurnRequest;
-import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.SkipTurnRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.TurnResponse;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.UniversityWelfareService;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.SpecialityEnum;
@@ -94,14 +93,12 @@ class UniversityWelfareControllerTest {
   @Test
   void testCallNextTurn() throws Exception {
     CallTurnRequest request = new CallTurnRequest();
-    request.setDoctorId("doc123");
     request.setSpeciality(SpecialityEnum.MEDICINA_GENERAL);
     request.setLevelAttention(1);
 
     TurnResponse response =
         new TurnResponse("A03", "Luis", SpecialityEnum.MEDICINA_GENERAL, LocalDateTime.now());
-    when(service.callNextTurn(anyString(), any(SpecialityEnum.class), anyInt()))
-        .thenReturn(response);
+    when(service.callNextTurn(any(SpecialityEnum.class), anyInt())).thenReturn(response);
 
     mockMvc
         .perform(
@@ -131,15 +128,13 @@ class UniversityWelfareControllerTest {
   @Test
   void testCallTurn() throws Exception {
     CallTurnRequest request = new CallTurnRequest();
-    request.setDoctorId("doc123");
     request.setTurnId(1L);
     request.setSpeciality(SpecialityEnum.MEDICINA_GENERAL);
     request.setLevelAttention(1);
 
     TurnResponse response =
         new TurnResponse("A03", "Luis", SpecialityEnum.MEDICINA_GENERAL, LocalDateTime.now());
-    when(service.callNextTurn(anyString(), anyLong(), any(SpecialityEnum.class), anyInt()))
-        .thenReturn(response);
+    when(service.callNextTurn(anyLong(), any(SpecialityEnum.class), anyInt())).thenReturn(response);
 
     mockMvc
         .perform(
@@ -178,17 +173,13 @@ class UniversityWelfareControllerTest {
 
   @Test
   void testSkipTurn() throws Exception {
-    SkipTurnRequest request = new SkipTurnRequest();
-    request.setDoctorId("doc123");
-    request.setSpeciality(SpecialityEnum.MEDICINA_GENERAL);
-
-    Mockito.doNothing().when(service).skipTurn(anyString(), any(SpecialityEnum.class));
+    Mockito.doNothing().when(service).skipTurn(SpecialityEnum.MEDICINA_GENERAL);
 
     mockMvc
         .perform(
             post("/api/turns/skip")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+                .content(objectMapper.writeValueAsString(SpecialityEnum.MEDICINA_GENERAL)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.message").value("Successfully skipped turn"));
   }
