@@ -43,19 +43,19 @@ class UniversityWelfareServiceTest {
   @Test
   void testAddTurn() {
     // Crear usuario de prueba
-    User user = new User("1", "Juan", RoleEnum.ESTUDIANTE);
+    User user = new User("1", "Juan", RoleEnum.STUDENT);
 
     // Crear petición de turno
     CreateTurnRequest request = new CreateTurnRequest();
     CreateUserRequest userRequest = new CreateUserRequest();
     userRequest.setName("Juan");
-    userRequest.setRole(RoleEnum.ESTUDIANTE);
+    userRequest.setRole(RoleEnum.STUDENT);
     request.setUser(userRequest);
-    request.setSpeciality(SpecialityEnum.MEDICINA_GENERAL);
+    request.setSpeciality(SpecialityEnum.GENERAL_MEDICINE);
     request.setPriority(PriorityEnum.EMBARAZO);
 
     // Turno esperado con usuario
-    Turn expectedTurn = new Turn(user, "123", SpecialityEnum.MEDICINA_GENERAL, LocalDateTime.now());
+    Turn expectedTurn = new Turn(user, "123", SpecialityEnum.GENERAL_MEDICINE, LocalDateTime.now());
 
     when(turnService.createTurn(request)).thenReturn(expectedTurn);
 
@@ -64,63 +64,63 @@ class UniversityWelfareServiceTest {
     assertNotNull(actualResponse);
     assertEquals("123", actualResponse.getCode());
     assertEquals("Juan", actualResponse.getUserName());
-    assertEquals(SpecialityEnum.MEDICINA_GENERAL, actualResponse.getSpeciality());
+    assertEquals(SpecialityEnum.GENERAL_MEDICINE, actualResponse.getSpeciality());
 
     verify(turnService, times(1)).createTurn(request);
   }
 
   @Test
   void testGetTurnsBySpeciality() {
-    User user1 = new User("1", "Juan", RoleEnum.ESTUDIANTE);
-    User user2 = new User("2", "Pedro", RoleEnum.ESTUDIANTE);
+    User user1 = new User("1", "Juan", RoleEnum.STUDENT);
+    User user2 = new User("2", "Pedro", RoleEnum.STUDENT);
 
     List<Turn> expectedTurns =
         List.of(
-            new Turn(user1, "123", SpecialityEnum.MEDICINA_GENERAL, LocalDateTime.now()),
-            new Turn(user2, "124", SpecialityEnum.MEDICINA_GENERAL, LocalDateTime.now()));
+            new Turn(user1, "123", SpecialityEnum.GENERAL_MEDICINE, LocalDateTime.now()),
+            new Turn(user2, "124", SpecialityEnum.GENERAL_MEDICINE, LocalDateTime.now()));
 
-    when(turnService.getTurns(SpecialityEnum.MEDICINA_GENERAL)).thenReturn(expectedTurns);
+    when(turnService.getTurns(SpecialityEnum.GENERAL_MEDICINE)).thenReturn(expectedTurns);
 
     List<TurnResponse> actualTurns =
-        universityWelfareService.getTurns(SpecialityEnum.MEDICINA_GENERAL);
+        universityWelfareService.getTurns(SpecialityEnum.GENERAL_MEDICINE);
 
     assertNotNull(actualTurns);
     assertEquals(2, actualTurns.size());
     assertEquals("Juan", actualTurns.get(0).getUserName());
-    assertEquals(SpecialityEnum.MEDICINA_GENERAL, actualTurns.get(0).getSpeciality());
+    assertEquals(SpecialityEnum.GENERAL_MEDICINE, actualTurns.get(0).getSpeciality());
 
-    verify(turnService, times(1)).getTurns(SpecialityEnum.MEDICINA_GENERAL);
+    verify(turnService, times(1)).getTurns(SpecialityEnum.GENERAL_MEDICINE);
   }
 
   @Test
   void testGetCurrentTurn() {
-    User user = new User("1", "Juan", RoleEnum.ESTUDIANTE);
-    Turn expectedTurn = new Turn(user, "123", SpecialityEnum.MEDICINA_GENERAL, LocalDateTime.now());
+    User user = new User("1", "Juan", RoleEnum.STUDENT);
+    Turn expectedTurn = new Turn(user, "123", SpecialityEnum.GENERAL_MEDICINE, LocalDateTime.now());
 
-    when(turnService.getCurrentTurn(SpecialityEnum.MEDICINA_GENERAL))
+    when(turnService.getCurrentTurn(SpecialityEnum.GENERAL_MEDICINE))
         .thenReturn(Optional.of(expectedTurn));
 
     Optional<TurnResponse> actualTurn =
-        universityWelfareService.getCurrentTurn(SpecialityEnum.MEDICINA_GENERAL);
+        universityWelfareService.getCurrentTurn(SpecialityEnum.GENERAL_MEDICINE);
 
     assertTrue(actualTurn.isPresent());
     assertEquals("123", actualTurn.get().getCode());
     assertEquals("Juan", actualTurn.get().getUserName());
-    assertEquals(SpecialityEnum.MEDICINA_GENERAL, actualTurn.get().getSpeciality());
+    assertEquals(SpecialityEnum.GENERAL_MEDICINE, actualTurn.get().getSpeciality());
 
-    verify(turnService, times(1)).getCurrentTurn(SpecialityEnum.MEDICINA_GENERAL);
+    verify(turnService, times(1)).getCurrentTurn(SpecialityEnum.GENERAL_MEDICINE);
   }
 
   @Test
   void testSkipTurn() {
     // Mock de turnService.skipTurn
-    doNothing().when(turnService).skipTurn(SpecialityEnum.MEDICINA_GENERAL);
+    doNothing().when(turnService).skipTurn(SpecialityEnum.GENERAL_MEDICINE);
 
     // Ejecutar el método
-    universityWelfareService.skipTurn(SpecialityEnum.MEDICINA_GENERAL);
+    universityWelfareService.skipTurn(SpecialityEnum.GENERAL_MEDICINE);
 
     // Verificar que se llamó correctamente
-    verify(turnService, times(1)).skipTurn(SpecialityEnum.MEDICINA_GENERAL);
+    verify(turnService, times(1)).skipTurn(SpecialityEnum.GENERAL_MEDICINE);
   }
 
   @Test
@@ -160,10 +160,10 @@ class UniversityWelfareServiceTest {
 
     when(universityWelfareRepository.getUniversityWelfare()).thenReturn(welfare);
 
-    universityWelfareService.disableTurns(SpecialityEnum.MEDICINA_GENERAL);
+    universityWelfareService.disableTurns(SpecialityEnum.GENERAL_MEDICINE);
 
     verify(universityWelfareRepository).save(welfare);
-    assertTrue(welfare.getDisbaleTurnsBySpeciality().contains(SpecialityEnum.MEDICINA_GENERAL));
+    assertTrue(welfare.getDisbaleTurnsBySpeciality().contains(SpecialityEnum.GENERAL_MEDICINE));
   }
 
   @Test
@@ -175,21 +175,21 @@ class UniversityWelfareServiceTest {
 
     assertThrows(
         MedicalTurnsException.class,
-        () -> universityWelfareService.disableTurns(SpecialityEnum.MEDICINA_GENERAL));
+        () -> universityWelfareService.disableTurns(SpecialityEnum.GENERAL_MEDICINE));
   }
 
   @Test
   void testEnableTurnsBySpeciality_success() {
     UniversityWelfare welfare = new UniversityWelfare();
     welfare.setDisableTurns(false);
-    welfare.disableTurns(SpecialityEnum.PSICOLOGIA);
+    welfare.disableTurns(SpecialityEnum.DENTISTRY);
 
     when(universityWelfareRepository.getUniversityWelfare()).thenReturn(welfare);
 
-    universityWelfareService.enableTurns(SpecialityEnum.PSICOLOGIA);
+    universityWelfareService.enableTurns(SpecialityEnum.DENTISTRY);
 
     verify(universityWelfareRepository).save(welfare);
-    assertFalse(welfare.getDisbaleTurnsBySpeciality().contains(SpecialityEnum.PSICOLOGIA));
+    assertFalse(welfare.getDisbaleTurnsBySpeciality().contains(SpecialityEnum.DENTISTRY));
   }
 
   @Test
@@ -201,7 +201,7 @@ class UniversityWelfareServiceTest {
 
     assertThrows(
         MedicalTurnsException.class,
-        () -> universityWelfareService.enableTurns(SpecialityEnum.ODONTOLOGIA));
+        () -> universityWelfareService.enableTurns(SpecialityEnum.PSYCHOLOGY));
   }
 
   @Test
@@ -212,11 +212,11 @@ class UniversityWelfareServiceTest {
     User user = new User();
     user.setId("user1");
     user.setName("Juan Pérez");
-    user.setRole(RoleEnum.ESTUDIANTE);
+    user.setRole(RoleEnum.STUDENT);
 
     turn.setUser(user);
     turn.setCode("T001");
-    turn.setSpeciality(SpecialityEnum.MEDICINA_GENERAL);
+    turn.setSpeciality(SpecialityEnum.GENERAL_MEDICINE);
     turn.setDate(LocalDateTime.now());
 
     Long turnId = 1L;
@@ -225,9 +225,9 @@ class UniversityWelfareServiceTest {
     when(turnService.startTurn(turn)).thenReturn(turn);
 
     TurnResponse response =
-        universityWelfareService.callNextTurn(turnId, SpecialityEnum.MEDICINA_GENERAL, 1);
+        universityWelfareService.callNextTurn(turnId, SpecialityEnum.GENERAL_MEDICINE, 1);
 
-    verify(turnService).finishTurn(SpecialityEnum.MEDICINA_GENERAL, 1);
+    verify(turnService).finishTurn(SpecialityEnum.GENERAL_MEDICINE, 1);
     assertNotNull(response);
     assertEquals("T001", response.getCode());
     assertEquals("Juan Pérez", response.getUserName());
@@ -243,11 +243,11 @@ class UniversityWelfareServiceTest {
     nextTurn.setCode("CODE123");
     nextTurn.setUser(user);
 
-    when(turnService.startNextTurn(SpecialityEnum.ODONTOLOGIA)).thenReturn(nextTurn);
+    when(turnService.startNextTurn(SpecialityEnum.PSYCHOLOGY)).thenReturn(nextTurn);
 
-    TurnResponse response = universityWelfareService.callNextTurn(SpecialityEnum.ODONTOLOGIA, 2);
+    TurnResponse response = universityWelfareService.callNextTurn(SpecialityEnum.PSYCHOLOGY, 2);
 
-    verify(turnService).finishTurn(SpecialityEnum.ODONTOLOGIA, 2);
+    verify(turnService).finishTurn(SpecialityEnum.PSYCHOLOGY, 2);
     assertNotNull(response);
     assertEquals("CODE123", response.getCode());
     assertEquals("Ana", response.getUserName());
@@ -257,7 +257,7 @@ class UniversityWelfareServiceTest {
   void testAddTurn_success() {
     CreateTurnRequest request = new CreateTurnRequest();
     request.setPriority(PriorityEnum.DISCAPACIDAD);
-    request.setSpeciality(SpecialityEnum.PSICOLOGIA);
+    request.setSpeciality(SpecialityEnum.DENTISTRY);
 
     // Simular usuario
     User user = new User();
@@ -286,7 +286,7 @@ class UniversityWelfareServiceTest {
     when(universityWelfareRepository.getUniversityWelfare()).thenReturn(welfare);
 
     CreateTurnRequest request = new CreateTurnRequest();
-    request.setSpeciality(SpecialityEnum.MEDICINA_GENERAL);
+    request.setSpeciality(SpecialityEnum.GENERAL_MEDICINE);
 
     assertThrows(MedicalTurnsException.class, () -> universityWelfareService.addTurn(request));
   }
@@ -296,18 +296,18 @@ class UniversityWelfareServiceTest {
     User user = new User();
     user.setId("123");
     user.setName("Juan");
-    user.setRole(RoleEnum.ESTUDIANTE);
+    user.setRole(RoleEnum.STUDENT);
 
     Turn turn1 = new Turn();
     turn1.setUser(user);
     turn1.setCode("T1");
-    turn1.setSpeciality(SpecialityEnum.MEDICINA_GENERAL);
+    turn1.setSpeciality(SpecialityEnum.GENERAL_MEDICINE);
     turn1.setDate(LocalDateTime.now());
 
     Turn turn2 = new Turn();
     turn2.setUser(user);
     turn2.setCode("T2");
-    turn2.setSpeciality(SpecialityEnum.PSICOLOGIA);
+    turn2.setSpeciality(SpecialityEnum.DENTISTRY);
     turn2.setDate(LocalDateTime.now());
 
     when(turnService.getTurns()).thenReturn(List.of(turn1, turn2));

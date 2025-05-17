@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TurnRepository extends JpaRepository<Turn, Long> {
   @Query(
-      "SELECT t FROM Turn t WHERE t.date BETWEEN :startOfDay AND :endOfDay AND t.user.id = :userId AND t.status != eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.StatusEnum.COMPLETED")
+      "SELECT t FROM Turn t WHERE t.date BETWEEN :startOfDay AND :endOfDay AND t.user.id = :userId AND t.status != eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.StatusEnum.COMPLETED AND t.status != eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.StatusEnum.FINISHED")
   Optional<Turn> findUserCurrrentTurn(
       @Param("startOfDay") LocalDateTime startOfDay,
       @Param("endOfDay") LocalDateTime endOfDay,

@@ -17,7 +17,7 @@ class TurnTest {
 
   @BeforeEach
   void setUp() {
-    user = new User("1", "Daniel", RoleEnum.ESTUDIANTE);
+    user = new User("1", "Daniel", RoleEnum.STUDENT);
     date = LocalDateTime.of(2025, 5, 10, 10, 0);
     turn = createTurn();
   }
@@ -60,7 +60,7 @@ class TurnTest {
   @Test
   void shouldReturnFalseWhenUserIsDifferent() {
     Turn turn2 = createTurn();
-    turn2.setUser(new User("99", "Otro", RoleEnum.ESTUDIANTE));
+    turn2.setUser(new User("99", "Otro", RoleEnum.STUDENT));
     assertNotEquals(turn, turn2);
   }
 
@@ -100,7 +100,7 @@ class TurnTest {
   }
 
   private Turn createTurn() {
-    Turn newTurn = new Turn(user, "M-0", SpecialityEnum.MEDICINA_GENERAL, date);
+    Turn newTurn = new Turn(user, "M-0", SpecialityEnum.GENERAL_MEDICINE, date);
     newTurn.setPriority(PriorityEnum.DISCAPACIDAD);
     newTurn.setStatus(StatusEnum.PENDING);
     newTurn.setLevelAttention(1);
