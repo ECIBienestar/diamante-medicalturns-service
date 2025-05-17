@@ -215,7 +215,14 @@ public class TurnServiceImpl implements TurnService {
     int sequence = specialitySequenceService.getSequence(speciality);
     specialitySequenceService.incrementSequence(speciality);
 
-    return String.format("%s-%d", speciality.name().charAt(0), sequence);
+    String prefix =
+        switch (speciality) {
+          case GENERAL_MEDICINE -> "M";
+          case DENTISTRY -> "O";
+          case PSYCHOLOGY -> "P";
+        };
+
+    return String.format("%s-%d", prefix, sequence);
   }
 
   private record TimeRange(LocalDateTime start, LocalDateTime end) {}

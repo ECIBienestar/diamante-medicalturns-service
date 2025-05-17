@@ -28,6 +28,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -59,7 +60,7 @@ class TurnServiceImplTest {
     when(userService.getUser(user.getId())).thenReturn(Optional.of(user));
     when(turnRepository.findUserCurrrentTurn(any(), any(), eq(user.getId())))
         .thenReturn(Optional.empty());
-    when(specialitySequenceService.getSequence(SpecialityEnum.MEDICINA_GENERAL)).thenReturn(0);
+    when(specialitySequenceService.getSequence(SpecialityEnum.GENERAL_MEDICINE)).thenReturn(0);
     when(turnRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
     Turn result = turnServiceImpl.createTurn(createTurnRequest);
@@ -67,7 +68,7 @@ class TurnServiceImplTest {
 
     assertNotNull(result);
     assertEquals(result, turn);
-    verify(specialitySequenceService).incrementSequence(SpecialityEnum.MEDICINA_GENERAL);
+    verify(specialitySequenceService).incrementSequence(SpecialityEnum.GENERAL_MEDICINE);
   }
 
   @Test
@@ -109,7 +110,7 @@ class TurnServiceImplTest {
 
     assertNotNull(newTurn);
     assertEquals(user, newTurn.getUser());
-    assertEquals(SpecialityEnum.MEDICINA_GENERAL, newTurn.getSpeciality());
+    assertEquals(SpecialityEnum.GENERAL_MEDICINE, newTurn.getSpeciality());
 
     verify(userService, times(2)).getUser(user.getId());
     verify(userService, times(1)).createUser(createUserRequest);
@@ -145,10 +146,10 @@ class TurnServiceImplTest {
 
   @Test
   void shouldReturnTodayTurnsBySpeciality() {
-    when(turnRepository.findTurnsForToday(any(), any(), eq(SpecialityEnum.MEDICINA_GENERAL)))
+    when(turnRepository.findTurnsForToday(any(), any(), eq(SpecialityEnum.GENERAL_MEDICINE)))
         .thenReturn(List.of(turn));
 
-    List<Turn> result = turnServiceImpl.getTurns(SpecialityEnum.MEDICINA_GENERAL);
+    List<Turn> result = turnServiceImpl.getTurns(SpecialityEnum.GENERAL_MEDICINE);
 
     assertNotNull(result);
     assertEquals(1, result.size());
@@ -176,10 +177,10 @@ class TurnServiceImplTest {
   void shouldReturnCurrentTurnBySpeciality() {
     turn.setStatus(StatusEnum.CURRENT);
 
-    when(turnRepository.findCurrentTurn(any(), any(), eq(SpecialityEnum.MEDICINA_GENERAL)))
+    when(turnRepository.findCurrentTurn(any(), any(), eq(SpecialityEnum.GENERAL_MEDICINE)))
         .thenReturn(Optional.of(turn));
 
-    Optional<Turn> result = turnServiceImpl.getCurrentTurn(SpecialityEnum.MEDICINA_GENERAL);
+    Optional<Turn> result = turnServiceImpl.getCurrentTurn(SpecialityEnum.GENERAL_MEDICINE);
 
     assertTrue(result.isPresent());
     assertEquals(turn, result.get());
@@ -199,10 +200,10 @@ class TurnServiceImplTest {
 
   @Test
   void shouldReturnLastTurnBySpeciality() {
-    when(turnRepository.findTurnsForToday(any(), any(), eq(SpecialityEnum.MEDICINA_GENERAL)))
+    when(turnRepository.findTurnsForToday(any(), any(), eq(SpecialityEnum.GENERAL_MEDICINE)))
         .thenReturn(List.of(turn));
 
-    Optional<Turn> result = turnServiceImpl.getLastTurn(SpecialityEnum.MEDICINA_GENERAL);
+    Optional<Turn> result = turnServiceImpl.getLastTurn(SpecialityEnum.GENERAL_MEDICINE);
 
     assertTrue(result.isPresent());
     assertEquals(turn, result.get());
@@ -212,10 +213,10 @@ class TurnServiceImplTest {
   void shouldFinishCurrentTurn() {
     turn.setStatus(StatusEnum.CURRENT);
 
-    when(turnRepository.findCurrentTurn(any(), any(), eq(SpecialityEnum.MEDICINA_GENERAL)))
+    when(turnRepository.findCurrentTurn(any(), any(), eq(SpecialityEnum.GENERAL_MEDICINE)))
         .thenReturn(Optional.of(turn));
 
-    turnServiceImpl.finishTurn(SpecialityEnum.MEDICINA_GENERAL, 4);
+    turnServiceImpl.finishTurn(SpecialityEnum.GENERAL_MEDICINE, 4);
 
     assertEquals(StatusEnum.COMPLETED, turn.getStatus());
     assertEquals(4, turn.getLevelAttention());
@@ -225,11 +226,11 @@ class TurnServiceImplTest {
   void shouldSkipCurrentTurn() {
     turn.setStatus(StatusEnum.CURRENT);
 
-    when(turnRepository.findCurrentTurn(any(), any(), eq(SpecialityEnum.MEDICINA_GENERAL)))
+    when(turnRepository.findCurrentTurn(any(), any(), eq(SpecialityEnum.GENERAL_MEDICINE)))
         .thenReturn(Optional.of(turn));
     when(turnRepository.save(turn)).thenReturn(turn);
 
-    turnServiceImpl.skipTurn(SpecialityEnum.MEDICINA_GENERAL);
+    turnServiceImpl.skipTurn(SpecialityEnum.GENERAL_MEDICINE);
 
     assertEquals(StatusEnum.FINISHED, turn.getStatus());
   }
@@ -238,24 +239,24 @@ class TurnServiceImplTest {
   void shouldStartNextTurn() {
     turn.setStatus(StatusEnum.PENDING);
 
-    when(turnRepository.findTurnsForToday(any(), any(), eq(SpecialityEnum.MEDICINA_GENERAL)))
+    when(turnRepository.findTurnsForToday(any(), any(), eq(SpecialityEnum.GENERAL_MEDICINE)))
         .thenReturn(List.of(turn));
     when(turnRepository.save(turn)).thenReturn(turn);
     when(turnRepository.findById(turn.getId())).thenReturn(Optional.of(turn));
 
-    Turn started = turnServiceImpl.startNextTurn(SpecialityEnum.MEDICINA_GENERAL);
+    Turn started = turnServiceImpl.startNextTurn(SpecialityEnum.GENERAL_MEDICINE);
 
     assertEquals(StatusEnum.CURRENT, started.getStatus());
   }
 
   @Test
   void shouldThrowMedicalTurnsExceptionWhenNoLastTurn() {
-    when(turnRepository.findTurnsForToday(any(), any(), eq(SpecialityEnum.MEDICINA_GENERAL)))
+    when(turnRepository.findTurnsForToday(any(), any(), eq(SpecialityEnum.GENERAL_MEDICINE)))
         .thenReturn(Collections.emptyList());
 
     assertThrows(
         MedicalTurnsException.class,
-        () -> turnServiceImpl.startNextTurn(SpecialityEnum.MEDICINA_GENERAL));
+        () -> turnServiceImpl.startNextTurn(SpecialityEnum.GENERAL_MEDICINE));
   }
 
   @Test
@@ -294,7 +295,7 @@ class TurnServiceImplTest {
         new AverageLevelByRole() {
           @Override
           public RoleEnum getRole() {
-            return RoleEnum.DOCTOR;
+            return RoleEnum.MEDICAL_STAFF;
           }
 
           @Override
@@ -307,7 +308,7 @@ class TurnServiceImplTest {
         new AverageLevelByRole() {
           @Override
           public RoleEnum getRole() {
-            return RoleEnum.ESTUDIANTE;
+            return RoleEnum.STUDENT;
           }
 
           @Override
@@ -322,7 +323,7 @@ class TurnServiceImplTest {
     // Role != null
     List<AverageLevelByRole> result =
         turnServiceImpl.getAverageLevelAttentionByRole(
-            RoleEnum.DOCTOR, LocalDate.now(), LocalDate.now());
+            RoleEnum.MEDICAL_STAFF, LocalDate.now(), LocalDate.now());
 
     assertEquals(1, result.size());
     assertTrue(result.contains(avg1));
@@ -352,7 +353,7 @@ class TurnServiceImplTest {
         new CountByRole() {
           @Override
           public RoleEnum getRole() {
-            return RoleEnum.DOCTOR;
+            return RoleEnum.MEDICAL_STAFF;
           }
 
           @Override
@@ -370,7 +371,7 @@ class TurnServiceImplTest {
         new CountByRole() {
           @Override
           public RoleEnum getRole() {
-            return RoleEnum.ESTUDIANTE;
+            return RoleEnum.STUDENT;
           }
 
           @Override
@@ -389,7 +390,7 @@ class TurnServiceImplTest {
     // Role != null and Status != null
     List<CountByRole> result =
         turnServiceImpl.getTurnCountByRole(
-            RoleEnum.DOCTOR, LocalDate.now(), LocalDate.now(), StatusEnum.PENDING);
+            RoleEnum.MEDICAL_STAFF, LocalDate.now(), LocalDate.now(), StatusEnum.PENDING);
 
     assertEquals(1, result.size());
     assertTrue(result.contains(count1));
@@ -405,7 +406,7 @@ class TurnServiceImplTest {
     // Role == null and Status != null
     List<CountByRole> resultWithNullStatus =
         turnServiceImpl.getTurnCountByRole(
-            RoleEnum.ESTUDIANTE, LocalDate.now(), LocalDate.now(), null);
+            RoleEnum.STUDENT, LocalDate.now(), LocalDate.now(), null);
 
     assertEquals(1, resultWithNullStatus.size());
     assertTrue(resultWithNullStatus.contains(count2));
@@ -436,7 +437,7 @@ class TurnServiceImplTest {
         new AverageLevelBySpeciality() {
           @Override
           public SpecialityEnum getSpeciality() {
-            return SpecialityEnum.MEDICINA_GENERAL;
+            return SpecialityEnum.GENERAL_MEDICINE;
           }
 
           @Override
@@ -449,7 +450,7 @@ class TurnServiceImplTest {
         new AverageLevelBySpeciality() {
           @Override
           public SpecialityEnum getSpeciality() {
-            return SpecialityEnum.ODONTOLOGIA;
+            return SpecialityEnum.PSYCHOLOGY;
           }
 
           @Override
@@ -464,7 +465,7 @@ class TurnServiceImplTest {
     // Speciality != null
     List<AverageLevelBySpeciality> result =
         turnServiceImpl.getAverageLevelAttentionBySpeciality(
-            SpecialityEnum.MEDICINA_GENERAL, LocalDate.now(), LocalDate.now());
+            SpecialityEnum.GENERAL_MEDICINE, LocalDate.now(), LocalDate.now());
 
     assertEquals(1, result.size());
     assertTrue(result.contains(avg1));
@@ -495,7 +496,7 @@ class TurnServiceImplTest {
         new CountBySpeciality() {
           @Override
           public SpecialityEnum getSpeciality() {
-            return SpecialityEnum.MEDICINA_GENERAL;
+            return SpecialityEnum.GENERAL_MEDICINE;
           }
 
           @Override
@@ -513,7 +514,7 @@ class TurnServiceImplTest {
         new CountBySpeciality() {
           @Override
           public SpecialityEnum getSpeciality() {
-            return SpecialityEnum.ODONTOLOGIA;
+            return SpecialityEnum.PSYCHOLOGY;
           }
 
           @Override
@@ -532,7 +533,7 @@ class TurnServiceImplTest {
     // Speciality != null and Status != null
     List<CountBySpeciality> result =
         turnServiceImpl.getTurnCountBySpeciality(
-            SpecialityEnum.MEDICINA_GENERAL, LocalDate.now(), LocalDate.now(), StatusEnum.PENDING);
+            SpecialityEnum.GENERAL_MEDICINE, LocalDate.now(), LocalDate.now(), StatusEnum.PENDING);
 
     assertEquals(1, result.size());
     assertTrue(result.contains(count1));
@@ -548,7 +549,7 @@ class TurnServiceImplTest {
     // Speciality == null and Status != null
     List<CountBySpeciality> resultWithNullStatus =
         turnServiceImpl.getTurnCountBySpeciality(
-            SpecialityEnum.ODONTOLOGIA, LocalDate.now(), LocalDate.now(), null);
+            SpecialityEnum.PSYCHOLOGY, LocalDate.now(), LocalDate.now(), null);
 
     assertEquals(1, resultWithNullStatus.size());
     assertTrue(resultWithNullStatus.contains(count2));
@@ -562,11 +563,42 @@ class TurnServiceImplTest {
     assertTrue(resultWithNullSpecialityAndStatus.contains(count2));
   }
 
+  @Test
+  void testCreateTurnPrefixForEachSpeciality() {
+    for (SpecialityEnum speciality : SpecialityEnum.values()) {
+      String expectedPrefix =
+          switch (speciality) {
+            case GENERAL_MEDICINE -> "M";
+            case DENTISTRY -> "O";
+            case PSYCHOLOGY -> "P";
+          };
+
+      when(userService.getUser("1032373105")).thenReturn(Optional.of(user));
+
+      createTurnRequest.setSpeciality(speciality);
+
+      when(turnRepository.findUserCurrrentTurn(any(), any(), anyString()))
+          .thenReturn(Optional.empty());
+      when(specialitySequenceService.getSequence(speciality)).thenReturn(1);
+      doNothing().when(specialitySequenceService).incrementSequence(speciality);
+
+      ArgumentCaptor<Turn> turnCaptor = ArgumentCaptor.forClass(Turn.class);
+      when(turnRepository.save(turnCaptor.capture())).thenAnswer(inv -> inv.getArgument(0));
+
+      Turn result = turnServiceImpl.createTurn(createTurnRequest);
+
+      assertNotNull(result);
+      assertTrue(
+          result.getCode().startsWith(expectedPrefix),
+          () -> "Expected prefix: " + expectedPrefix + " for " + speciality);
+    }
+  }
+
   private CreateUserRequest getCreateUserRequest() {
     createUserRequest = new CreateUserRequest();
     createUserRequest.setId("1032373105");
     createUserRequest.setName("Daniel");
-    createUserRequest.setRole(RoleEnum.ESTUDIANTE);
+    createUserRequest.setRole(RoleEnum.STUDENT);
 
     return createUserRequest;
   }
@@ -574,18 +606,18 @@ class TurnServiceImplTest {
   private CreateTurnRequest getCreateTurnRequest() {
     createTurnRequest = new CreateTurnRequest();
     createTurnRequest.setUser(createUserRequest);
-    createTurnRequest.setSpeciality(SpecialityEnum.MEDICINA_GENERAL);
+    createTurnRequest.setSpeciality(SpecialityEnum.GENERAL_MEDICINE);
 
     return createTurnRequest;
   }
 
   private User getUser() {
-    return new User("1032373105", "Daniel", RoleEnum.ESTUDIANTE);
+    return new User("1032373105", "Daniel", RoleEnum.STUDENT);
   }
 
   private Turn getTurn() {
     dateTime = LocalDateTime.now();
-    Turn newTurn = new Turn(user, "M-0", SpecialityEnum.MEDICINA_GENERAL, dateTime);
+    Turn newTurn = new Turn(user, "M-0", SpecialityEnum.GENERAL_MEDICINE, dateTime);
     newTurn.setId(1L);
 
     return newTurn;

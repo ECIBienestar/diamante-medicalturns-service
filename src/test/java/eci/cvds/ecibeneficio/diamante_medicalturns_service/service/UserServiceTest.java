@@ -29,9 +29,9 @@ class UserServiceTest {
     createUserRequest = new CreateUserRequest();
     createUserRequest.setId("12345");
     createUserRequest.setName("John Doe");
-    createUserRequest.setRole(RoleEnum.ESTUDIANTE);
+    createUserRequest.setRole(RoleEnum.STUDENT);
 
-    mockUser = new User("12345", "John Doe", RoleEnum.ESTUDIANTE);
+    mockUser = new User("12345", "John Doe", RoleEnum.STUDENT);
   }
 
   @Test
@@ -50,7 +50,7 @@ class UserServiceTest {
 
     assertTrue(foundUser.isPresent());
     assertEquals("John Doe", foundUser.get().getName());
-    assertEquals(RoleEnum.ESTUDIANTE, foundUser.get().getRole());
+    assertEquals(RoleEnum.STUDENT, foundUser.get().getRole());
   }
 
   @Test

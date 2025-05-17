@@ -28,22 +28,22 @@ class SpecialitySequenceServiceImplTest {
   void shouldReturnSequenceForExistingSpeicality() {
     SpecialitySequence sequence = new SpecialitySequence();
     sequence.setSequence(5);
-    when(repository.findBySpeciality(SpecialityEnum.MEDICINA_GENERAL))
+    when(repository.findBySpeciality(SpecialityEnum.GENERAL_MEDICINE))
         .thenReturn(Optional.of(sequence));
 
-    int result = service.getSequence(SpecialityEnum.MEDICINA_GENERAL);
+    int result = service.getSequence(SpecialityEnum.GENERAL_MEDICINE);
 
     assertEquals(5, result);
-    verify(repository).findBySpeciality(SpecialityEnum.MEDICINA_GENERAL);
+    verify(repository).findBySpeciality(SpecialityEnum.GENERAL_MEDICINE);
   }
 
   @Test
   void shouldThrowExceptionWhenSpecialityNotFound() {
-    when(repository.findBySpeciality(SpecialityEnum.PSICOLOGIA)).thenReturn(Optional.empty());
+    when(repository.findBySpeciality(SpecialityEnum.DENTISTRY)).thenReturn(Optional.empty());
 
     MedicalTurnsException e =
         assertThrows(
-            MedicalTurnsException.class, () -> service.getSequence(SpecialityEnum.PSICOLOGIA));
+            MedicalTurnsException.class, () -> service.getSequence(SpecialityEnum.DENTISTRY));
 
     assertEquals(MedicalTurnsException.SEQUENCE_NOT_FOUND, e.getMessage());
   }
@@ -52,9 +52,9 @@ class SpecialitySequenceServiceImplTest {
   void shouldIncrementSequenceCorrectly() {
     SpecialitySequence sequence = new SpecialitySequence();
     sequence.setSequence(5);
-    when(repository.findBySpeciality(SpecialityEnum.ODONTOLOGIA)).thenReturn(Optional.of(sequence));
+    when(repository.findBySpeciality(SpecialityEnum.PSYCHOLOGY)).thenReturn(Optional.of(sequence));
 
-    service.incrementSequence(SpecialityEnum.ODONTOLOGIA);
+    service.incrementSequence(SpecialityEnum.PSYCHOLOGY);
 
     ArgumentCaptor<SpecialitySequence> captor = ArgumentCaptor.forClass(SpecialitySequence.class);
     verify(repository).save(captor.capture());
