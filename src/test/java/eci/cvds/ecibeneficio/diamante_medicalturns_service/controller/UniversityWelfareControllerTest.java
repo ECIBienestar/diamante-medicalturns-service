@@ -9,9 +9,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CallTurnRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateTurnRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.TurnResponse;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.UserResponse;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.UniversityWelfareService;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.RoleEnum;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.SpecialityEnum;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -34,8 +35,9 @@ class UniversityWelfareControllerTest {
   @Test
   void testAddTurn() throws Exception {
     CreateTurnRequest request = new CreateTurnRequest(); // set campos si es necesario
+    UserResponse userResponse = new UserResponse("1", "Juan", RoleEnum.STUDENT);
     TurnResponse mockResponse =
-        new TurnResponse("A01", "Juan", SpecialityEnum.GENERAL_MEDICINE, LocalDateTime.now());
+        new TurnResponse(1L, "A01", userResponse, SpecialityEnum.GENERAL_MEDICINE, false);
 
     when(service.addTurn(any())).thenReturn(mockResponse);
 
@@ -70,8 +72,9 @@ class UniversityWelfareControllerTest {
 
   @Test
   void testGetLastTurnFound() throws Exception {
+    UserResponse userResponse = new UserResponse("1", "Ana", RoleEnum.STUDENT);
     TurnResponse turn =
-        new TurnResponse("A02", "Ana", SpecialityEnum.GENERAL_MEDICINE, LocalDateTime.now());
+        new TurnResponse(1L, "A02", userResponse, SpecialityEnum.GENERAL_MEDICINE, false);
     when(service.getLastCurrentTurn()).thenReturn(Optional.of(turn));
 
     mockMvc
@@ -96,8 +99,9 @@ class UniversityWelfareControllerTest {
     request.setSpeciality(SpecialityEnum.GENERAL_MEDICINE);
     request.setLevelAttention(1);
 
+    UserResponse userResponse = new UserResponse("1", "Luis", RoleEnum.STUDENT);
     TurnResponse response =
-        new TurnResponse("A03", "Luis", SpecialityEnum.GENERAL_MEDICINE, LocalDateTime.now());
+        new TurnResponse(1L, "A03", userResponse, SpecialityEnum.GENERAL_MEDICINE, false);
     when(service.callNextTurn(any(SpecialityEnum.class), anyInt())).thenReturn(response);
 
     mockMvc
@@ -132,9 +136,10 @@ class UniversityWelfareControllerTest {
     request.setSpeciality(SpecialityEnum.GENERAL_MEDICINE);
     request.setLevelAttention(1);
 
+    UserResponse userResponse = new UserResponse("1", "Luis", RoleEnum.STUDENT);
     TurnResponse response =
-        new TurnResponse("A03", "Luis", SpecialityEnum.GENERAL_MEDICINE, LocalDateTime.now());
-    when(service.callNextTurn(anyLong(), any(SpecialityEnum.class), anyInt())).thenReturn(response);
+        new TurnResponse(eq(1L), "A03", userResponse, SpecialityEnum.GENERAL_MEDICINE, false);
+    when(service.callNextTurn(1L, any(SpecialityEnum.class), anyInt())).thenReturn(response);
 
     mockMvc
         .perform(
@@ -147,8 +152,9 @@ class UniversityWelfareControllerTest {
 
   @Test
   void testGetLastTurnBySpeciality() throws Exception {
+    UserResponse userResponse = new UserResponse("1", "Ana", RoleEnum.STUDENT);
     TurnResponse turn =
-        new TurnResponse("A02", "Ana", SpecialityEnum.GENERAL_MEDICINE, LocalDateTime.now());
+        new TurnResponse(1L, "A02", userResponse, SpecialityEnum.GENERAL_MEDICINE, false);
     when(service.getCurrentTurn(SpecialityEnum.GENERAL_MEDICINE)).thenReturn(Optional.of(turn));
 
     mockMvc
