@@ -184,8 +184,8 @@ class UniversityWelfareControllerTest {
     mockMvc
         .perform(
             post("/api/turns/skip")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(SpecialityEnum.GENERAL_MEDICINE)))
+                .param("speciality", "GENERAL_MEDICINE")
+                .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.message").value("Successfully skipped turn"));
   }
