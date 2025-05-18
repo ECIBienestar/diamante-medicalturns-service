@@ -63,10 +63,30 @@ class UniversityWelfareServiceTest {
 
     assertNotNull(actualResponse);
     assertEquals("123", actualResponse.getCode());
-    assertEquals("Juan", actualResponse.getUserName());
+    assertEquals("Juan", actualResponse.getUser().getName());
     assertEquals(SpecialityEnum.GENERAL_MEDICINE, actualResponse.getSpeciality());
 
     verify(turnService, times(1)).createTurn(request);
+  }
+
+  @Test
+  void shouldThrowExceptionWhenSpecialityIsDisabled() {
+    // Arrange
+    SpecialityEnum speciality = SpecialityEnum.GENERAL_MEDICINE;
+
+    UniversityWelfare universityWelfare = new UniversityWelfare();
+    universityWelfare.disableTurns(speciality);
+
+    CreateTurnRequest request = new CreateTurnRequest();
+    request.setSpeciality(speciality);
+
+    when(universityWelfareRepository.getUniversityWelfare()).thenReturn(universityWelfare);
+
+    // Act & Assert
+    MedicalTurnsException exception =
+        assertThrows(MedicalTurnsException.class, () -> universityWelfareService.addTurn(request));
+
+    assertEquals(MedicalTurnsException.TURNS_DISABLED, exception.getMessage());
   }
 
   @Test
@@ -86,7 +106,7 @@ class UniversityWelfareServiceTest {
 
     assertNotNull(actualTurns);
     assertEquals(2, actualTurns.size());
-    assertEquals("Juan", actualTurns.get(0).getUserName());
+    assertEquals("Juan", actualTurns.get(0).getUser().getName());
     assertEquals(SpecialityEnum.GENERAL_MEDICINE, actualTurns.get(0).getSpeciality());
 
     verify(turnService, times(1)).getTurns(SpecialityEnum.GENERAL_MEDICINE);
@@ -105,7 +125,7 @@ class UniversityWelfareServiceTest {
 
     assertTrue(actualTurn.isPresent());
     assertEquals("123", actualTurn.get().getCode());
-    assertEquals("Juan", actualTurn.get().getUserName());
+    assertEquals("Juan", actualTurn.get().getUser().getName());
     assertEquals(SpecialityEnum.GENERAL_MEDICINE, actualTurn.get().getSpeciality());
 
     verify(turnService, times(1)).getCurrentTurn(SpecialityEnum.GENERAL_MEDICINE);
@@ -230,7 +250,7 @@ class UniversityWelfareServiceTest {
     verify(turnService).finishTurn(SpecialityEnum.GENERAL_MEDICINE, 1);
     assertNotNull(response);
     assertEquals("T001", response.getCode());
-    assertEquals("Juan Pérez", response.getUserName());
+    assertEquals("Juan Pérez", response.getUser().getName());
   }
 
   @Test
@@ -250,7 +270,7 @@ class UniversityWelfareServiceTest {
     verify(turnService).finishTurn(SpecialityEnum.PSYCHOLOGY, 2);
     assertNotNull(response);
     assertEquals("CODE123", response.getCode());
-    assertEquals("Ana", response.getUserName());
+    assertEquals("Ana", response.getUser().getName());
   }
 
   @Test
@@ -275,7 +295,7 @@ class UniversityWelfareServiceTest {
     TurnResponse response = universityWelfareService.addTurn(request);
 
     assertEquals("T1", response.getCode());
-    assertEquals("Juan Pérez", response.getUserName());
+    assertEquals("Juan Pérez", response.getUser().getName());
   }
 
   @Test
@@ -315,7 +335,7 @@ class UniversityWelfareServiceTest {
     List<TurnResponse> responses = universityWelfareService.getTurns();
 
     assertEquals(2, responses.size());
-    assertEquals("Juan", responses.get(0).getUserName());
+    assertEquals("Juan", responses.get(0).getUser().getName());
   }
 
   @Test
@@ -334,6 +354,7 @@ class UniversityWelfareServiceTest {
 
     assertTrue(response.isPresent());
     assertEquals("ULTIMO", response.get().getCode());
-    assertEquals("John Doe", response.get().getUserName()); // Verificamos que no haya NullPointer
+    assertEquals(
+        "John Doe", response.get().getUser().getName()); // Verificamos que no haya NullPointer
   }
 }

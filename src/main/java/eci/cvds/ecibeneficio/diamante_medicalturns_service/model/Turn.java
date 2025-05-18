@@ -37,6 +37,10 @@ public class Turn {
     this.date = date;
   }
 
+  public boolean hasPriority() {
+    return priority != null;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;

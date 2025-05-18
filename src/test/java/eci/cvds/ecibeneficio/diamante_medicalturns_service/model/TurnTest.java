@@ -23,6 +23,18 @@ class TurnTest {
   }
 
   @Test
+  void shouldReturnTrueWhenPriorityIsNotNull() {
+    turn.setPriority(PriorityEnum.DISCAPACIDAD);
+    assertTrue(turn.hasPriority());
+  }
+
+  @Test
+  void shouldReturnFalseWhenPriorityIsNull() {
+    turn.setPriority(null);
+    assertFalse(turn.hasPriority());
+  }
+
+  @Test
   void shouldReturnTrueForSameAttributes() {
     Turn turn2 = createTurn();
 
