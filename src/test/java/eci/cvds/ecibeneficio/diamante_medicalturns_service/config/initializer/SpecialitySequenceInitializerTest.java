@@ -24,11 +24,11 @@ class SpecialitySequenceInitializerTest {
 
   @Test
   void shouldInitializeSequences() {
-    when(specialitySequenceRepository.findById(SpecialityEnum.MEDICINA_GENERAL))
-        .thenReturn(Optional.of(new SpecialitySequence(SpecialityEnum.MEDICINA_GENERAL, 5)));
+    when(specialitySequenceRepository.findById(SpecialityEnum.GENERAL_MEDICINE))
+        .thenReturn(Optional.of(new SpecialitySequence(SpecialityEnum.GENERAL_MEDICINE, 5)));
 
     for (SpecialityEnum speciality : SpecialityEnum.values()) {
-      if (speciality != SpecialityEnum.MEDICINA_GENERAL) {
+      if (speciality != SpecialityEnum.GENERAL_MEDICINE) {
         when(specialitySequenceRepository.findById(speciality)).thenReturn(Optional.empty());
       }
     }
@@ -45,7 +45,7 @@ class SpecialitySequenceInitializerTest {
             .collect(Collectors.toSet());
 
     for (SpecialityEnum speciality : SpecialityEnum.values()) {
-      if (speciality != SpecialityEnum.MEDICINA_GENERAL) {
+      if (speciality != SpecialityEnum.GENERAL_MEDICINE) {
         assert (savedSpecialities.contains(speciality));
       } else {
         assert (!savedSpecialities.contains(speciality));

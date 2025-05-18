@@ -1,7 +1,6 @@
 package eci.cvds.ecibeneficio.diamante_medicalturns_service.service;
 
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateTurnRequest;
-import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Doctor;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Turn;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.projection.AverageLevelByRole;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.projection.AverageLevelBySpeciality;
@@ -29,9 +28,9 @@ public interface TurnService {
 
   Optional<Turn> getLastTurn(SpecialityEnum speciality);
 
-  void finishTurn(SpecialityEnum speciality, int levelAttention, Doctor doctor);
+  void finishTurn(SpecialityEnum speciality, int levelAttention);
 
-  void skipTurn(SpecialityEnum speciality, Doctor doctor);
+  void skipTurn(SpecialityEnum speciality);
 
   Turn startNextTurn(SpecialityEnum speciality);
 

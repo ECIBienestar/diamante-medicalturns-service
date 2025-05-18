@@ -12,16 +12,26 @@ import org.junit.jupiter.api.Test;
 
 class TurnTest {
   private User user;
-  private Doctor doctor;
   private LocalDateTime date;
   private Turn turn;
 
   @BeforeEach
-   void setUp() {
-    user = new User("1", "Daniel", RoleEnum.ESTUDIANTE);
-    doctor = new Doctor("2", "Carlos", RoleEnum.DOCTOR, SpecialityEnum.MEDICINA_GENERAL);
+  void setUp() {
+    user = new User("1", "Daniel", RoleEnum.STUDENT);
     date = LocalDateTime.of(2025, 5, 10, 10, 0);
     turn = createTurn();
+  }
+
+  @Test
+  void shouldReturnTrueWhenPriorityIsNotNull() {
+    turn.setPriority(PriorityEnum.DISCAPACIDAD);
+    assertTrue(turn.hasPriority());
+  }
+
+  @Test
+  void shouldReturnFalseWhenPriorityIsNull() {
+    turn.setPriority(null);
+    assertFalse(turn.hasPriority());
   }
 
   @Test
@@ -62,7 +72,7 @@ class TurnTest {
   @Test
   void shouldReturnFalseWhenUserIsDifferent() {
     Turn turn2 = createTurn();
-    turn2.setUser(new User("99", "Otro", RoleEnum.ESTUDIANTE));
+    turn2.setUser(new User("99", "Otro", RoleEnum.STUDENT));
     assertNotEquals(turn, turn2);
   }
 
@@ -70,20 +80,6 @@ class TurnTest {
   void shouldReturnFalseWhenUserIsNull() {
     Turn turn2 = createTurn();
     turn2.setUser(null);
-    assertNotEquals(turn, turn2);
-  }
-
-  @Test
-  void shouldReturnFalseWhenDoctorIsDifferent() {
-    Turn turn2 = createTurn();
-    turn2.setDoctor(new Doctor("99", "Otro", RoleEnum.DOCTOR, SpecialityEnum.PSICOLOGIA));
-    assertNotEquals(turn, turn2);
-  }
-
-  @Test
-  void shouldReturnFalseWhenDoctorIsNull() {
-    Turn turn2 = createTurn();
-    turn2.setDoctor(null);
     assertNotEquals(turn, turn2);
   }
 
@@ -116,8 +112,7 @@ class TurnTest {
   }
 
   private Turn createTurn() {
-    Turn newTurn = new Turn(user, "M-0", SpecialityEnum.MEDICINA_GENERAL, date);
-    newTurn.setDoctor(doctor);
+    Turn newTurn = new Turn(user, "M-0", SpecialityEnum.GENERAL_MEDICINE, date);
     newTurn.setPriority(PriorityEnum.DISCAPACIDAD);
     newTurn.setStatus(StatusEnum.PENDING);
     newTurn.setLevelAttention(1);
