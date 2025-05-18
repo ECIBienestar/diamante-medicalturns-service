@@ -202,7 +202,7 @@ public class UniversityWelfareController {
   })
   @PostMapping("/skip")
   public ResponseEntity<ApiResponse<TurnResponse>> skipTurn(
-      @RequestBody SpecialityEnum speciality) {
+      @RequestParam SpecialityEnum speciality) {
     universityWelfareService.skipTurn(speciality);
 
     return ResponseEntity.ok(ApiResponse.success("Successfully skipped turn"));
