@@ -52,7 +52,8 @@ The module operates as an independent microservice, orchestrated within a micros
 
 ### 🏗️ Architectural Style
 
-[BACKEND ARCHITECTURE DOCUMENT](<assets/docs/Backend-architecture.pdf>)
+You can consult the complete document [here](https://pruebacorreoescuelaingeduco-my.sharepoint.com/:w:/g/personal/daniel_dcamelo_mail_escuelaing_edu_co/ETpyb_BfbnxAsZGTGKw-IB4BxNGzTujCry-kpqriQQOVgA?e=fh9OXx).
+
 
 ### ⚙️ Funcionamiento Interno
 
