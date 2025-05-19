@@ -1,16 +1,13 @@
-# 📅 Módulo de Gestión de Turnos para Servicios de Bienestar
+# 📅 Shift Management Module for Wellness Services
 
-## 📌 Descripción del Módulo
+## 📌 Module Description
 
-Este módulo permite a los miembros de la comunidad universitaria (estudiantes, docentes, administrativos y personal de
-servicios generales) gestionar y visualizar turnos para atención en los servicios de bienestar institucional: medicina
-general, odontología y psicología.  
-El sistema contempla la asignación de turnos desde tablets de autoservicio, control administrativo por parte del
-personal autorizado y seguimiento por parte de los profesionales de la salud.
+This module allows members of the university community (students, faculty, administrative staff, and general service personnel) to manage and view appointments for institutional wellness services: general medicine, dentistry, and psychology.
+The system includes appointment scheduling via self-service tablets, administrative control by authorized personnel, and follow-up by healthcare professionals.
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
+## 🛠️ Technologies Used
 
 - **Java 17**
 - **Spring Boot**
@@ -23,239 +20,214 @@ personal autorizado y seguimiento por parte de los profesionales de la salud.
 
 ---
 
-## 🔧 Funcionamiento del Módulo
+## 🔧 Module Functionality
 
-### 🔗 Interacción con Otros Módulos
+### 🔗 Interaction with Other Modules
 
-El módulo opera como un microservicio independiente, orquestado dentro de una arquitectura basada en microservicios y
-expuesto mediante un **API Gateway** que gestiona la autenticación y el enrutamiento de peticiones.
+The module operates as an independent microservice, orchestrated within a microservices-based architecture and exposed through an **API Gateway** that handles authentication and request routing.
 
-#### 🔄 Flujo General de Interacción:
+#### 🔄 General Interaction Flow:
 
-1. **Cliente (Web/Móvil)**: Envía solicitudes para turnos médicos al **API Gateway**.
+1. **Cliente (Web/Móvil)**: Sends medical appointment requests to the **API Gateway**.
 2. **API Gateway**:
-    - Obtiene un token JWT desde el **Auth Service**.
-    - Valida el token y enruta la petición al microservicio correspondiente.
+    - Retrieves a JWT token from the **Auth Service**.
+    - Validates the token and routes the request to the corresponding microservice.
 3. **Medical Shifts Service**:
-    - Verifica el usuario y sus roles a través del **Users Service**.
-    - Procesa la solicitud, registra la información en su base de datos y emite eventos al **Bus de Eventos**.
+    - Verifies the user and their roles through the **Users Service**.
 4. **Estadistics Service**:
-    - Consume los eventos generados para generar reportes históricos y estadísticas de atención.
+    - Consumes the generated events to create historical reports and care statistics.
 
-#### 🧩 Servicios Relacionados
+#### 🧩 Related Services
 
-| Servicio                | Descripción                                            |
+| Service                 | Description                                            |
 |-------------------------|--------------------------------------------------------|
-| **Auth Service**        | Autenticación y emisión de tokens JWT                  |
-| **API Gateway**         | Enrutamiento y control de acceso                       |
-| **Users Service**       | Consulta y validación de usuarios                      |
-| **Estadistics Service** | Registro histórico y generación de reportes            |
-| **Event Bus**           | Middleware de eventos asincrónicos (Kafka + Cloud Bus) |
+| **Auth Service**        | Authentication and issuance of JWT tokens              |
+| **API Gateway**         | Routing and access control                             |
+| **Users Service**       | User consultation and validation                       |
+| **Estadistics Service** | Historical record and report generation                |
 
-#### 🔗 Diagrama de Microservicios
+#### 🔗 Microservices Diagram
 
-![microservicios](<assets/imgs/diagrams/microservices.png>)
+![Microservices](<assets/imgs/diagrams/microservices.png>)
 
-### 🏗️ Estilo Arquitectónico
+### 🏗️ Architectural Style
 
-[DOCUMENTO DE ARQUITECTURA BACKEND](<assets/docs/Backend-architecture.pdf>)
+[BACKEND ARCHITECTURE DOCUMENT](<assets/docs/Backend-architecture.pdf>)
 
 ### ⚙️ Funcionamiento Interno
 
-El **MOD-LLL-001: Módulo de Turnos Médicos** expone una API RESTful para gestionar la creación, consulta y modificación
-de turnos. Utiliza autenticación basada en JWT y eventos distribuidos para la comunicación entre servicios. Incluye
-integración con tablets para asignación física de turnos y módulos visuales para pantallas de atención.
+The **MOD-LLL-001: Medical Shift Module** exposes a RESTful API for managing the creation, viewing, and modification of appointments. It uses JWT-based authentication and distributed events for communication between services. It includes integration with tablets for physical appointment assignment and visual modules for service screens.
 
-> 🔍 _Más detalles disponibles en el documento de análisis de requerimientos._
+> 🔍 _More details available in the requirements analysis document._
 
-[Análisis Requerimientos](<assets/docs/Requirements-analysis.pdf>)
+[Requirements Analysis](<assets/docs/Requirements-analysis.pdf>)
 
 ---
 
-## 📊 Diagramas del Sistema
+## 📊 System Diagrams
 
-- [ ] Diagrama de Clases
+- [ ] Class Diagram
 
-![Diagrama de Clases](<assets/imgs/diagrams/class.jpg>)
+![Class Diagram](<assets/imgs/diagrams/class.png>)
 
-El diagrama de clases representa las principales entidades involucradas en la gestión de turnos en el contexto de
-bienestar universitario.  
-Cada clase encapsula atributos y relaciones específicas para reflejar el comportamiento y la estructura del sistema.
+The class diagram represents the main entities involved in shift management in the context of university welfare.
+Each class encapsulates specific attributes and relationships to reflect the behavior and structure of the system.
 
-### Clases Principales
+### Main Classes
 
 ### `User`
 
-- Representa a los usuarios que pueden solicitar turnos.
-- **Atributos**: `id`, `name`, `role`
-- **Relaciones**: Tiene una relación con la clase `Turn` como paciente.
-
-### `Doctor`
-
-- Representa a los profesionales encargados de atender turnos.
-- **Atributos**: `userId`, `speciality`
-- **Relaciones**: Se relaciona con un `User` y está asociado a una especialidad médica.
+- Represents the users who can request appointments.
+- **Attributes**: `id`, `name`, `role`**Relationships**: It has a relationship with the `Turn` class as a patient.
 
 ### `Turn`
 
-- Contiene la información de los turnos asignados o solicitados.
-- **Atributos**: `id`, `code`, `date`, `levelAttention`, `priority`, `speciality`, `status`, `dateAttention`
-- **Asociaciones**:
-    - Un `Doctor` que atiende el turno.
-    - Un `User` que solicita el turno.
+- Contains information on assigned or requested shifts.
+- **Attributes**: `id`, `code`, `date`, `levelAttention`, `priority`, `speciality`, `status`, `dateAttention`
+- **Relationships**:
+  - A `User` who requests the turn.
 
 ### `UniversityWelfare`
 
-- Contiene configuraciones relacionadas con la disponibilidad de turnos.
-- **Atributos**: `id`, `disableTurns`, `disableTurnsBySpeciality` (lista de especialidades deshabilitadas)
+- Contains settings related to shift availability.
+- **Attributes**: `id`, `disableTurns`
+- **Relationships**: It has a relationship with the `DisableTurnsBySpeciality` class.
+
+### `DisableTurnsBySpeciality`
+- Contains settings related to shift availability by specialty.
+- **Attributes**: `speciality`
+- **Relationships**: It has a relationship with the `UniversityWelfare` class.
 
 ### `Multimedia`
 
-- Gestiona contenido informativo relacionado al servicio.
-- **Atributos**: `id`, `name`, `type`, `url`, `duration`
+- Manages informative content related to the service.
+- **Attributes**: `id`, `name`, `type`, `url`, `duration`
 
 ### `SpecialitySequence`
 
-- Lleva el control de la numeración secuencial de turnos por especialidad.
-- **Atributos**: `id`, `speciality`, `sequence`
+- Keeps track of the sequential numbering of shifts by specialty.
+- **Attributes**: `id`, `speciality`, `sequence`
 
-Astha Diagrama de
-clases: [Astha Diagrama de clases](<assets/docs/Class-diagrams.asta>)
+Astha Class Diagram: [Astha Class Diagram](<assets/docs/Class-diagrams.asta>)
 
-- [ ] Diagrama de Componentes
+- [ ] Component Diagram
 
-![Diagrama de Componentes](<assets/imgs/diagrams/components.jpg>)
+![Component Diagram](<assets/imgs/diagrams/components.png>)
 
-El siguiente diagrama de componentes permite evidenciar el flujo completo y la estructura funcional del sistema *
-*MedicalTurns**, abarcando desde la interfaz de usuario hasta la integración con servicios externos.
+The following component diagram demonstrates the complete flow and functional structure of the *MedicalTurns* system, covering everything from the user interface to integration with external services.
 
-### Componentes Principales
+- [ ] External services
+![External services](<assets/imgs/diagrams/bismuto_statics_service.png>)
+
+Raw data is sent and processed data is returned.
+
+### Main Components
 
 ### `UniversityWelfareService`
 
-- Se encarga de la gestión de turnos, incluyendo su creación y actualización.
+- It is responsible for managing shifts, including their creation and updating.
 
 ### `ReportService`
 
-- Recopila y envía los datos necesarios para el análisis estadístico.
-- Esta información es procesada por el servicio externo `bismuto-statistics-service`, el cual genera las estadísticas
-  cuando son solicitadas.
+- Collects and sends the data necessary for statistical analysis.
+- This information is processed by the external service `bismuth-statistics-service`, which generates the statistics
+when requested.
 
 ### `MultimediaService`
 
-- Administra los elementos multimedia del módulo, como imágenes y videos.
-- Se apoya en el `MultimediaController` para exponer estos recursos a través de la API.
+- Manages the module's multimedia elements, such as images and videos.
+- Relies on the `MultimediaController` to expose these resources through the API.
 
+- [ ] Sequence Diagram
 
-- [ ] Diagrama de Secuencia
+[Sequence Diagram](<assets/docs/Sequence-Diagrams.pdf>)
 
-[Diagramas de secuencia](<assets/docs/Sequence-Diagrams.pdf>)
+This section documents the various **sequence diagrams** that describe the interaction between system components over time, specifically in the key flows defined for each functional module. These diagrams are essential for visualizing how the various services, controllers, and entities collaborate to fulfill the defined use cases.
 
-En esta sección se documentan los distintos **diagramas de secuencia** que describen la interacción entre componentes
-del sistema a lo largo del tiempo, específicamente en los flujos clave definidos para cada módulo funcional. Estos
-diagramas son fundamentales para visualizar cómo los distintos servicios, controladores y entidades colaboran para
-cumplir con los casos de uso definidos.
+### Organization of Diagrams
 
-### Organización de los Diagramas
+Sequence diagrams are organized in folders under the `sequence-diagrams` directory, according to the functional and technical modules of the system. The structure follows the **layered architecture** pattern:
 
-Los diagramas de secuencia están organizados en carpetas bajo el directorio `sequence-diagrams`, de acuerdo con los
-módulos funcionales y técnicos del sistema. La estructura sigue el patrón de **arquitectura de capas**:
+- `controller/`: Contains diagrams focused on interactions at the API and HTTP controller levels.
+- `service/`: Contains diagrams detailing the business logic and how the system's internal services manage processes.
 
-- `controller/`: contiene los diagramas centrados en las interacciones a nivel de API y controladores HTTP.
-- `service/`: contiene los diagramas que detallan la lógica de negocio y cómo los servicios internos del sistema
-  gestionan los procesos.
+Each subfolder within `controller` and `service` corresponds to a specific module of the system:
 
-Cada subcarpeta dentro de `controller` y `service` corresponde a un módulo específico del sistema:
+- `multimedia-controller` and `multimedia-service`
+They document the workflows related to uploading, querying, and validating multimedia files associated with medical appointments or users.
 
-- `multimedia-controller` y `multimedia-service`  
-  Documentan los flujos relacionados con la carga, consulta y validación de archivos multimedia asociados a turnos
-  médicos o usuarios.
+- `report-controller`
+Contains diagrams representing the communication between the main system and the external statistics and reporting module, as well as the display of that data to the user.
 
-- `report-controller`  
-  Contiene diagramas que representan la comunicación entre el sistema principal y el módulo externo de estadísticas y
-  reportes, así como la exposición de esos datos al usuario.
+- `university-welfare-controller` and `university-welfare-service`
+Represent operations related to university welfare, including social assistance flows or student tracking.
 
-- `university-welfare-controller` y `university-welfare-service`  
-  Representan las operaciones relacionadas con el bienestar universitario, incluyendo flujos de asistencia social o
-  seguimiento de estudiantes.
-
-- `turn-service`  
-  Incluye los diagramas para la gestión de turnos médicos, como la asignación, finalización (por asistencia o no
-  asistencia) y consulta de disponibilidad.
+- `turn-service`
+Includes diagrams for managing medical shifts, such as assignment, completion (due to attendance or non-attendance), and availability queries.
 
 ---
 
-Estos diagramas permiten una comprensión clara del comportamiento del sistema en tiempo de ejecución y son una
-herramienta útil tanto para desarrolladores como para analistas funcionales.
+These diagrams provide a clear understanding of system behavior at runtime and are a useful tool for both developers and functional analysts.
 
-- [ ] Diagrama de Datos
+- [ ] Data Diagram
 
-![Diagrama de Datos](<assets/imgs/diagrams/data.png>)
+![Data Diagram](<assets/imgs/diagrams/data.png>)
 
-El sistema utiliza una base de datos relacional (**PostgreSQL**) cuyo modelo representa las entidades clave involucradas
-en la gestión de turnos dentro del contexto de bienestar universitario.
+The system uses a relational database (**PostgreSQL**) whose model represents the key entities involved in shift management within the context of university wellness.
 
-A continuación, se describen las tablas principales y su propósito:
+The main tables and their purposes are described below:
 
 ### `app_user`
 
-Representa a los usuarios del sistema (como estudiantes o personal administrativo).  
-Aunque el sistema general cuenta con un módulo centralizado de autenticación, este microservicio almacena localmente la
-tabla `app_user` para evitar una dependencia directa, garantizando la **autonomía y resiliencia** del servicio, en
-conformidad con los principios de diseño de microservicios.
-
-### `doctor`
-
-Representa a los profesionales encargados de atender los turnos.  
-Está asociado directamente a un registro en `app_user` y contiene información adicional como la **especialidad médica**.
+Represents the system's users (such as students or administrative staff).
+Although the overall system has a centralized authentication module, this microservice stores the `app_user` table locally to avoid direct dependencies, ensuring the service's autonomy and resilience, in accordance with microservices design principles.
 
 ### `turn`
 
-Registra los turnos solicitados por los usuarios, incluyendo atributos como:
+Records appointments requested by users, including attributes such as:
 
-- Código
-- Fecha
-- Nivel de atención
-- Prioridad
-- Especialidad
-- Estado del turno
+- Code
+- Date
+- Date attention
+- Level attention
+- Priority
+- Specialty
+- Status
 
-Cada turno se asocia tanto a un usuario como a un doctor.
+Each shift is associated with a user.
 
 ### `university_welfare`
 
-Define la configuración general del servicio de bienestar universitario, incluyendo si los **turnos están habilitados o
-deshabilitados**.
+Defines the general settings for the university wellness service, including whether *shifts are enabled or disabled*.
 
 ### `disable_turns_speciality`
 
-Relaciona las especialidades con los servicios de bienestar que tienen **turnos deshabilitados**.  
-Esta tabla permite representar múltiples especialidades deshabilitadas por instancia de bienestar, solventando la
-limitación de las bases de datos relacionales respecto al almacenamiento de listas.
+Relates specialties to wellness services that have **disabled shifts**.
+This table allows you to represent multiple disabled specialties per wellness instance, addressing the
+limitation of relational databases regarding list storage.
 
 ### `multimedia`
 
-Almacena contenido informativo como **videos o imágenes** relacionados con el servicio. Incluye atributos como:
+Stores informative content such as **videos or images** related to the service. It includes attributes such as:
 
-- Duración
-- Nombre
-- Tipo
+- Duration
+- Name
+- Type
 - URL
 
 ### `speciality_sequence`
 
-Lleva un control de **numeración secuencial por especialidad**, lo que permite asignar un número de turno ordenado por
-tipo de atención médica.
+It maintains **sequential numbering by specialty**, allowing you to assign a shift number sorted by type of medical care.
 
 ---
 
-## 🚀 Funcionalidades del Módulo
+## 🚀 Module Features
 
 ### 📡 Endpoints REST
 
-Puedes consumir el API ya desplegado accediendo a su documentación en línea:
+You can consume the already deployed API by accessing its online documentation:
 
-- **Swagger en Azure:**
+- **Swagger in Azure:**
 
 ```
 https://diamante-medicalturns-develop-dvb8c2cqfbh4gwbg.canadacentral-01.azurewebsites.net/swagger-ui/index.html
@@ -263,74 +235,65 @@ https://diamante-medicalturns-develop-dvb8c2cqfbh4gwbg.canadacentral-01.azureweb
 
 ### 😊 Happy Path
 
-| Escenario                               | Resultado esperado                                                  |
-|-----------------------------------------|---------------------------------------------------------------------|
-| Crear un nuevo turno                    | Se registra el turno y se devuelve el turno creado                  |
-| Obtener lista de turnos disponibles     | Se devuelve una lista actualizada de turnos                         |
-| Eliminar un turno existente             | Se elimina correctamente y se confirma la operación                 |
-| Consultar turnos por fecha específica   | Se devuelve lista de turnos correspondientes a la fecha             |
-| Consultar turnos por usuario específico | Se devuelve lista de turnos asignados al usuario                    |
-| Consultar turnos por especialidad       | Se devuelve lista de turnos filtrados por especialidad              |
-| Habilitar turnos                        | Se habilitan los turnos y se confirma la habilitación               |
-| Deshabilitar turnos                     | Se deshabilitan los turnos y se confirma la acción                  |
-| Obtener el último turno llamado         | Se devuelve el último turno que fue llamado                         |
-| Obtener turnos pendientes               | Se devuelve la lista de turnos en estado pendiente                  |
-| Subir nuevo archivo multimedia          | Se sube correctamente el archivo y se devuelve el multimedia creado |
-| Listar todos los archivos multimedia    | Se devuelve lista de todos los elementos multimedia                 |
-| Consultar último elemento multimedia    | Se devuelve el elemento multimedia más reciente                     |
-| Consultar multimedia por ID             | Se devuelve el elemento multimedia correspondiente al ID            |
-| Eliminar multimedia por ID              | Se elimina el elemento multimedia y se confirma la acción           |
-| Deshabilitar turnos de una especialidad | Se deshabilitan turnos de la especialidad indicada                  |
-| Habilitar turnos de una especialidad    | Se habilitan turnos de la especialidad indicada                     |
+| Scenario                            | Expected Result                                                          |
+| ----------------------------------- | ------------------------------------------------------------------------ |
+| Create a new appointment            | The appointment is registered and the created appointment is returned    |
+| Get list of available appointments  | An updated list of appointments is returned                              |
+| Delete an existing appointment      | The appointment is deleted successfully and the operation is confirmed   |
+| Query appointments by specific date | A list of appointments for the given date is returned                    |
+| Query appointments by specific user | A list of appointments assigned to the user is returned                  |
+| Query appointments by specialty     | A list of appointments filtered by specialty is returned                 |
+| Enable appointments                 | The appointments are enabled and confirmation is returned                |
+| Disable appointments                | The appointments are disabled and confirmation is returned               |
+| Get the last called appointment     | The last called appointment is returned                                  |
+| Get pending appointments            | A list of pending appointments is returned                               |
+| Upload new multimedia file          | The file is successfully uploaded and the created multimedia is returned |
+| List all multimedia files           | A list of all multimedia items is returned                               |
+| Get the latest multimedia item      | The most recent multimedia item is returned                              |
+| Get multimedia by ID                | The multimedia item corresponding to the ID is returned                  |
+| Delete multimedia by ID             | The multimedia item is deleted and the action is confirmed               |
+| Disable appointments by specialty   | Appointments for the specified specialty are disabled                    |
+| Enable appointments by specialty    | Appointments for the specified specialty are enabled                     |
 
-### 🚨 Manejo de Errores
+### 🚨 Error Handling
 
-| Código | Mensaje de error             | Causa probable                         |
-|--------|------------------------------|----------------------------------------|
-| 400    | "Datos de entrada inválidos" | Validaciones fallidas en el formulario |
-| 401    | "Usuario no autenticado"     | Token inválido o ausente               |
-| 404    | "Turnos no disponibles"      | Los turnos están deshabilitados        |
-| 404    | "Especialidad no disponible" | Especialidad deshabilitada             |
-| 500    | "Error interno del servidor" | Fallo inesperado                       |
-
+| Code | Error Message                | Probable Cause                 |
+| ---- | ---------------------------- | ------------------------------ |
+| 400  | "Invalid input data"         | Failed validations in the form |
+| 401  | "User not authenticated"     | Invalid or missing token       |
+| 404  | "Appointments not available" | Appointments are disabled      |
+| 404  | "Specialty not available"    | Specialty is disabled          |
+| 500  | "Internal server error"      | Unexpected failure             |
 ---
 
-## 📬 Uso de Colas de Mensajería
+## 🧪 Evidence of Tests
 
-| Tópico Kafka | Evento Disparado | Resultado Esperado | Happy Path | Dead Letter Queue (DLQ) |
-|--------------|------------------|--------------------|------------|-------------------------|
-| x            | x                | x                  | x          | x                       |
+- Evidence of coverage:
 
----
+As part of software quality assurance, automated tests were performed to validate the correct functioning of the developed components. To measure the scope of these tests, JaCoCo (Java Code Coverage) was used, a tool that analyzes the percentage of source code executed during test execution.
 
-## 🧪 Evidencia de Pruebas
+Additionally, SonarQube was integrated to provide a more comprehensive analysis of the code's status, including coverage metrics, technical debt, code duplication, and compliance with best practices. Thanks to these tools, test coverage of over 90% was maintained, indicating a high level of automated validation of the system's code.
 
-- Evidencia de cobertura:
+This level of coverage not only reflects an effort to ensure software reliability but also facilitates future project maintenance by reducing the likelihood of errors in already implemented features.
 
-Como parte del aseguramiento de la calidad del software, se realizaron pruebas automatizadas enfocadas en validar el correcto funcionamiento de los componentes desarrollados. Para medir el alcance de dichas pruebas, se utilizó JaCoCo (Java Code Coverage), una herramienta que permite analizar qué porcentaje del código fuente ha sido ejecutado durante la ejecución de las pruebas.
-
-Además, se integró SonarQube para proporcionar un análisis más completo del estado del código, incluyendo métricas de cobertura, deuda técnica, duplicación de código y cumplimiento de buenas prácticas. Gracias a estas herramientas, se logró mantener una cobertura de pruebas superior al 90%, lo cual indica un alto nivel de validación automatizada sobre el código del sistema.
-
-Este nivel de cobertura no solo refleja un esfuerzo por garantizar la confiabilidad del software, sino que también facilita el mantenimiento futuro del proyecto al reducir la probabilidad de errores en funcionalidades ya implementadas.
-
-- Evidencia de cobertura JaCoCo:
+- JaCoCo Coverage Evidence:
 
 ![alt text](assets/imgs/test/jacoco.jpg) 
 
-- Evidencia de cobertura SonarQube:
+- SonarQube Coverage Evidence:
 
 ![alt text](assets/imgs/test/sonar.jpg) 
 
-- Las pruebas están ubicadas en:  
+- The tests are located at:  
   `src/test/java/eci/cvds/ecibeneficio/diamante_medicalturns_service`
 
-- Tecnologías utilizadas:
+- Technologies used:
     - **JUnit 5**
     - **Mockito**
     - **Spring Boot Test**
     - **SonarQube**
 
-### ▶️ Ejecutar pruebas:
+### ▶️ Run tests:
 
 ```bash
 mvn test
@@ -338,29 +301,29 @@ mvn test
 
 ---
 
-## ▶️ Instrucciones para Ejecutar el Proyecto
+## ▶️ Instructions for Executing the Project
 
-### 🚀 De forma local
+### 🚀 Locally
 
-1. **Clona el repositorio:**
+1. **Clone the repository:**
 
 ```bash
 git clone https://github.com/ECIBienestar/diamante-medicalturns-service.git
 ```
 
-2. **Navega a la raíz del proyecto:**
+2. **Navigate to the root of the project:**
 
 ```bash
 cd diamante_medicalturns_service
 ```
 
-3. **Ejecuta el servicio con Maven:**
+3. **Run the service with Maven:**
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-4. **Accede al Swagger local:**
+4. **Access the local Swagger:**
 
 ```
 http://localhost:8080/swagger-ui.html
@@ -368,18 +331,18 @@ http://localhost:8080/swagger-ui.html
 
 ---
 
-## 🚀 Evidencia de CI/CD y Despliegue
+## 🚀 CI/CD and Deployment Evidence
 
-- El proyecto se encuentra desplegado en Azure.  
-  👉 [Despliegue para pruebas](diamante-medicalturns-develop-dvb8c2cqfbh4gwbg.canadacentral-01.azurewebsites.net)  
-  👉 [Despliegue para produccion](diamante-medicalturns-dzdja4b4bfayaqdk.canadacentral-01.azurewebsites.net)
-- Pipelines configurados:
-    - GitHub Actions para pruebas y builds
-    - Azure Pipelines para despliegue automático
+- The project is deployed in Azure.  
+  👉 [Deployment for testing](diamante-medicalturns-develop-dvb8c2cqfbh4gwbg.canadacentral-01.azurewebsites.net)  
+  👉 [Deployment to production](diamante-medicalturns-dzdja4b4bfayaqdk.canadacentral-01.azurewebsites.net)
+- Configured pipelines:
+  - GitHub Actions for testing and builds
+  - Azure Pipelines for automatic deployment
 
 ---
 
-## 🗂️ Estructura del Proyecto
+## 🗂️ Project Structure
 
 ```
 C:.
@@ -390,6 +353,17 @@ C:.
 ├───assets
 │   ├───docs
 │   └───imgs
+│       ├───diagrams
+│       ├───sequence-diagrams
+│       │   ├───controller
+│       │   │   ├───multimedia-controller
+│       │   │   ├───report-controller
+│       │   │   └───university-welfare-controller
+│       │   └───service
+│       │       ├───multimedia-service
+│       │       ├───turn-service
+│       │       └───university-welfare-service
+│       └───test
 ├───src
 │   ├───main
 │   │   ├───java
@@ -422,6 +396,13 @@ C:.
 │               └───cvds
 │                   └───ecibeneficio
 │                       └───diamante_medicalturns_service
+│                           ├───config
+│                           │   └───initializer
+│                           ├───controller
+│                           ├───exception
+│                           ├───factory
+│                           ├───model
+│                           └───service
 └───target
     ├───classes
     │   └───eci
@@ -450,30 +431,28 @@ C:.
     │   └───annotations
     ├───generated-test-sources
     │   └───test-annotations
-    ├───maven-status
-    │   └───maven-compiler-plugin
-    │       ├───compile
-    │       │   └───default-compile
-    │       └───testCompile
-    │           └───default-testCompile
-    ├───surefire-reports
+    |
     └───test-classes
         └───eci
             └───cvds
                 └───ecibeneficio
                     └───diamante_medicalturns_service
+                        ├───config
+                        │   └───initializer
+                        ├───controller
+                        ├───exception
+                        ├───factory
+                        ├───model
+                        └───service
+
 ```
 
 ---
 
-## 📝 Documentación del Código
+## 📝 Code Documentation
 
-Todo el código fuente cuenta con documentación mediante JavaDoc:
+All source code is documented via JavaDoc:
 
-- 📘 **Clases** documentadas con su propósito.
-- 🔧 **Métodos** descritos con entradas, salidas y comportamiento.
-- 🧩 **Propiedades** explicadas según su función dentro del modelo.
-
----
-
-**📌 Nota:** Este README se actualizará conforme avance el desarrollo del proyecto.
+- 📘 **Classes** documented with their purpose.
+- 🔧 **Methods** described with inputs, outputs and behavior.
+- 🧩 **Properties** explained according to their function within the model.
