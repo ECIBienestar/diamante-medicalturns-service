@@ -3,13 +3,11 @@ package eci.cvds.ecibeneficio.diamante_medicalturns_service.service.impl;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateTurnRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.TurnResponse;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.exception.MedicalTurnsException;
-import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Doctor;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Turn;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.UniversityWelfare;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.UniversityWelfareRepository;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.TurnService;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.UniversityWelfareService;
-import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.UserService;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.SpecialityEnum;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.mapper.TurnMapper;
 import java.util.List;
@@ -22,7 +20,6 @@ import org.springframework.stereotype.Service;
 public class UniversityWelfareServiceImpl implements UniversityWelfareService {
   private final UniversityWelfareRepository universityWelfareRepository;
   private final TurnService turnService;
-  private final UserService userService;
 
   @Override
   public TurnResponse addTurn(CreateTurnRequest turn) {
@@ -58,28 +55,24 @@ public class UniversityWelfareServiceImpl implements UniversityWelfareService {
   }
 
   @Override
-  public TurnResponse callNextTurn(String doctorId, SpecialityEnum speciality, int levelAttention) {
-    Doctor doctor = getDoctor(doctorId);
-    turnService.finishTurn(speciality, levelAttention, doctor);
+  public TurnResponse callNextTurn(SpecialityEnum speciality, int levelAttention) {
+    turnService.finishTurn(speciality, levelAttention);
     Turn nextTurn = turnService.startNextTurn(speciality);
 
     return TurnMapper.toResponse(nextTurn);
   }
 
   @Override
-  public TurnResponse callNextTurn(
-      String doctorId, Long nextTurnId, SpecialityEnum speciality, int levelAttention) {
-    Doctor doctor = getDoctor(doctorId);
-    turnService.finishTurn(speciality, levelAttention, doctor);
+  public TurnResponse callNextTurn(Long nextTurnId, SpecialityEnum speciality, int levelAttention) {
+    turnService.finishTurn(speciality, levelAttention);
     Turn nextTurn = turnService.startTurn(turnService.getTurn(nextTurnId));
 
     return TurnMapper.toResponse(nextTurn);
   }
 
   @Override
-  public void skipTurn(String doctorId, SpecialityEnum speciality) {
-    Doctor doctor = getDoctor(doctorId);
-    turnService.skipTurn(speciality, doctor);
+  public void skipTurn(SpecialityEnum speciality) {
+    turnService.skipTurn(speciality);
   }
 
   @Override
@@ -127,12 +120,5 @@ public class UniversityWelfareServiceImpl implements UniversityWelfareService {
 
   private List<TurnResponse> mapToResponse(List<Turn> turns) {
     return turns.stream().map(TurnMapper::toResponse).toList();
-  }
-
-  private Doctor getDoctor(String id) {
-    return (Doctor)
-        userService
-            .getUser(id)
-            .orElseThrow(() -> new MedicalTurnsException(MedicalTurnsException.USER_NOT_FOUND));
   }
 }

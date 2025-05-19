@@ -1,7 +1,6 @@
 package eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response;
 
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.SpecialityEnum;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,8 +11,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TurnResponse {
+  private Long id;
   private String code;
-  private String userName;
+  private UserResponse user;
   private SpecialityEnum speciality;
-  private LocalDateTime date;
+  private boolean priority;
 }

@@ -2,7 +2,6 @@ package eci.cvds.ecibeneficio.diamante_medicalturns_service.controller;
 
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CallTurnRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateTurnRequest;
-import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.SkipTurnRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.ApiResponse;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.TurnResponse;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.UniversityWelfareService;
@@ -156,9 +155,7 @@ public class UniversityWelfareController {
         ApiResponse.success(
             "Successfully called turn",
             universityWelfareService.callNextTurn(
-                callNextTurn.getDoctorId(),
-                callNextTurn.getSpeciality(),
-                callNextTurn.getLevelAttention())));
+                callNextTurn.getSpeciality(), callNextTurn.getLevelAttention())));
   }
 
   @Operation(summary = "Llamar turno específico")
@@ -183,7 +180,6 @@ public class UniversityWelfareController {
         ApiResponse.success(
             "Successfully called turn",
             universityWelfareService.callNextTurn(
-                callNextTurn.getDoctorId(),
                 callNextTurn.getTurnId(),
                 callNextTurn.getSpeciality(),
                 callNextTurn.getLevelAttention())));
@@ -205,8 +201,9 @@ public class UniversityWelfareController {
         content = @Content(mediaType = "application/json"))
   })
   @PostMapping("/skip")
-  public ResponseEntity<ApiResponse<TurnResponse>> skipTurn(@RequestBody SkipTurnRequest skipTurn) {
-    universityWelfareService.skipTurn(skipTurn.getDoctorId(), skipTurn.getSpeciality());
+  public ResponseEntity<ApiResponse<TurnResponse>> skipTurn(
+      @RequestParam SpecialityEnum speciality) {
+    universityWelfareService.skipTurn(speciality);
 
     return ResponseEntity.ok(ApiResponse.success("Successfully skipped turn"));
   }
