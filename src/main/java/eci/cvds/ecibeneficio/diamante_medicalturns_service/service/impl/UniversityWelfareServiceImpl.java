@@ -113,10 +113,7 @@ public class UniversityWelfareServiceImpl implements UniversityWelfareService {
 
   @Override
   public boolean areTurnsEnabled() {
-    if (universityWelfareRepository.getUniversityWelfare().isDisableTurns()) {
-      return false;
-    }
-    return true;
+    return !universityWelfareRepository.getUniversityWelfare().isDisableTurns();
   }
 
   @Override
