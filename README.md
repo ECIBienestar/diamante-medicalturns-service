@@ -117,10 +117,17 @@ Astha Class Diagram: [Astha Class Diagram](<assets/docs/Class-diagrams.asta>)
 
 The following component diagram demonstrates the complete flow and functional structure of the *MedicalTurns* system, covering everything from the user interface to integration with external services.
 
-- [ ] External services
-![External services](<assets/imgs/diagrams/bismuto_statics_service.png>)
+- [ ] Connection with statistics service
 
-Raw data is sent and processed data is returned.
+![Statistics service](<assets/imgs/diagrams/bismuto_statics_service.png>)
+
+The raw data is sent and returned processed.
+
+- [ ] Connection with auth service
+
+![Auth service](<assets/imgs/diagrams/auth_service.png>)
+
+Generates the token which will be used by our module for its validation and management of permissions by role
 
 ### Main Components
 
