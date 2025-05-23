@@ -4,6 +4,7 @@ import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CallTurnR
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateTurnRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.ApiResponse;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.TurnResponse;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Turn;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.UniversityWelfareService;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.SpecialityEnum;
 import io.swagger.v3.oas.annotations.Operation;
@@ -295,4 +296,43 @@ public class UniversityWelfareController {
     universityWelfareService.disableTurns(speciality);
     return ResponseEntity.ok(ApiResponse.success("Turns disabled"));
   }
+
+  @Operation(summary = "Verifica el estado de habilitación de los turnos.")
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "Estado actual de habilitación actual de los turnos",
+            content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "500",
+            description = "Error en el servidor",
+            content = @Content(mediaType = "application/json"))
+  })
+  @GetMapping("/are-enabled")
+  public ResponseEntity<ApiResponse<Boolean>> areTurnsEnabled() {
+    return ResponseEntity.ok(ApiResponse.success("Turns enabled status",
+            universityWelfareService.areTurnsEnabled()));
+  }
+
+
+
+  @Operation(summary = "Obtiene las especialidades cuyos turnos estan deshabilitados")
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "Especialidades cuyos turnos estan deshabilitados",
+            content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "500",
+            description = "Error en el servidor",
+            content = @Content(mediaType = "application/json"))
+  })
+  @GetMapping("/specialties-disabled")
+  public ResponseEntity<ApiResponse<List<SpecialityEnum>>> getSpecialtiesDisabled () {
+    return ResponseEntity.ok(ApiResponse.success("Disabled specialties",
+            universityWelfareService.getSpecialtiesDisabled()));
+  }
+
+
+
 }

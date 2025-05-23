@@ -111,6 +111,17 @@ public class UniversityWelfareServiceImpl implements UniversityWelfareService {
     universityWelfareRepository.save(universityWelfare);
   }
 
+  @Override
+  public boolean areTurnsEnabled() {
+    return !universityWelfareRepository.getUniversityWelfare().isDisableTurns();
+  }
+
+  @Override
+  public List<SpecialityEnum> getSpecialtiesDisabled() {
+    UniversityWelfare universityWelfare = universityWelfareRepository.getUniversityWelfare();
+    return universityWelfare.getDisbaleTurnsBySpeciality();
+  }
+
   private boolean turnsAreDisabled(SpecialityEnum speciality) {
     return universityWelfareRepository
         .getUniversityWelfare()
@@ -121,4 +132,5 @@ public class UniversityWelfareServiceImpl implements UniversityWelfareService {
   private List<TurnResponse> mapToResponse(List<Turn> turns) {
     return turns.stream().map(TurnMapper::toResponse).toList();
   }
+
 }
