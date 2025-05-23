@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/reports")
-@PreAuthorize("hasAnyRole('SECRETARIA_MEDICA', 'DOCTOR')")
+@PreAuthorize("hasAnyRole('MEDICAL_SECRETARY', 'MEDICAL_STAFF', 'ADMINISTRATOR')")
 @RequiredArgsConstructor
 @Tag(name = "Reportes", description = "Reportes de turnos y atención")
 public class ReportController {

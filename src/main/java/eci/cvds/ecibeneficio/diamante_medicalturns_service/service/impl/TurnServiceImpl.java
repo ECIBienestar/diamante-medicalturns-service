@@ -3,7 +3,6 @@ package eci.cvds.ecibeneficio.diamante_medicalturns_service.service.impl;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateTurnRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateUserRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.exception.MedicalTurnsException;
-import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Doctor;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Turn;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.User;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.TurnRepository;
@@ -83,7 +82,7 @@ public class TurnServiceImpl implements TurnService {
   public Optional<Turn> getLastCurrentTurn() {
     var timeRange = getTodayTimeRange();
 
-    return turnRepository.findCurrentTurns(timeRange.start, timeRange.end).stream().findFirst();
+    return turnRepository.findLastCurrentTurn(timeRange.start, timeRange.end).stream().findFirst();
   }
 
   @Override
@@ -95,14 +94,13 @@ public class TurnServiceImpl implements TurnService {
 
   @Transactional
   @Override
-  public void finishTurn(SpecialityEnum speciality, int levelAttention, Doctor doctor) {
+  public void finishTurn(SpecialityEnum speciality, int levelAttention) {
     Optional<Turn> currentTurn = getCurrentTurn(speciality);
 
     currentTurn.ifPresent(
         turn -> {
           turn.setStatus(StatusEnum.COMPLETED);
           turn.setLevelAttention(levelAttention);
-          turn.setDoctor(doctor);
           turnRepository.save(turn);
           turnRepository.flush();
         });
@@ -110,13 +108,12 @@ public class TurnServiceImpl implements TurnService {
 
   @Transactional
   @Override
-  public void skipTurn(SpecialityEnum speciality, Doctor doctor) {
+  public void skipTurn(SpecialityEnum speciality) {
     Optional<Turn> currentTurn = getCurrentTurn(speciality);
 
     currentTurn.ifPresent(
         turn -> {
           turn.setStatus(StatusEnum.FINISHED);
-          turn.setDoctor(doctor);
           turnRepository.save(turn);
           turnRepository.flush();
         });
@@ -140,6 +137,7 @@ public class TurnServiceImpl implements TurnService {
     }
 
     turn.setStatus(StatusEnum.CURRENT);
+    turn.setDateAttention(LocalDateTime.now());
     turnRepository.save(turn);
     turnRepository.flush();
 
@@ -217,7 +215,14 @@ public class TurnServiceImpl implements TurnService {
     int sequence = specialitySequenceService.getSequence(speciality);
     specialitySequenceService.incrementSequence(speciality);
 
-    return String.format("%s-%d", speciality.name().charAt(0), sequence);
+    String prefix =
+        switch (speciality) {
+          case GENERAL_MEDICINE -> "M";
+          case DENTISTRY -> "O";
+          case PSYCHOLOGY -> "P";
+        };
+
+    return String.format("%s-%d", prefix, sequence);
   }
 
   private record TimeRange(LocalDateTime start, LocalDateTime end) {}

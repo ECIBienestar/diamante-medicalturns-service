@@ -30,7 +30,7 @@ public class MultimediaController {
             responseCode = "500",
             description = "Error interno del servidor al subir el archivo multimedia")
       })
-  @PreAuthorize("hasAnyRole('SECRETARIA_MEDICA', 'ADMINISTRATIVO')")
+  @PreAuthorize("hasAnyRole('MEDICAL_SECRETARY', 'ADMINISTRATOR')")
   @PostMapping
   public ResponseEntity<Void> uploadMultimedia(@RequestBody CreateMultimediaRequest request) {
     multimediaService.createMultimedia(request);
@@ -48,7 +48,7 @@ public class MultimediaController {
             responseCode = "500",
             description = "Error interno del servidor al obtener el archivo multimedia")
       })
-  @PreAuthorize("hasRole('SECRETARIA_MEDICA')")
+  @PreAuthorize("hasRole('MEDICAL_SECRETARY')")
   @GetMapping("/{id}")
   public ResponseEntity<MultimediaResponse> getById(@PathVariable Long id) {
     return ResponseEntity.ok(multimediaService.getMultimedia(id));
@@ -65,7 +65,7 @@ public class MultimediaController {
             responseCode = "500",
             description = "Error interno del servidor al obtener los archivos multimedia")
       })
-  @PreAuthorize("hasRole('SECRETARIA_MEDICA')")
+  @PreAuthorize("hasRole('MEDICAL_SECRETARY')")
   @GetMapping
   public ResponseEntity<List<MultimediaResponse>> getAll() {
     return ResponseEntity.ok(multimediaService.getAllMultimedia());
@@ -84,7 +84,7 @@ public class MultimediaController {
             responseCode = "500",
             description = "Error interno del servidor al eliminar el archivo multimedia")
       })
-  @PreAuthorize("hasAnyRole('SECRETARIA_MEDICA', 'ADMINISTRATIVO')")
+  @PreAuthorize("hasAnyRole('MEDICAL_SECRETARY', 'ADMINISTRATOR')")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable Long id) {
     multimediaService.deleteMultimedia(id);

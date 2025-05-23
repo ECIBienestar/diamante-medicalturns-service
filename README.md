@@ -2,8 +2,11 @@
 
 ## 📌 Descripción del Módulo
 
-Este módulo permite a los miembros de la comunidad universitaria (estudiantes, docentes, administrativos y personal de servicios generales) gestionar y visualizar turnos para atención en los servicios de bienestar institucional: medicina general, odontología y psicología.  
-El sistema contempla la asignación de turnos desde tablets de autoservicio, control administrativo por parte del personal autorizado y seguimiento por parte de los profesionales de la salud.
+Este módulo permite a los miembros de la comunidad universitaria (estudiantes, docentes, administrativos y personal de
+servicios generales) gestionar y visualizar turnos para atención en los servicios de bienestar institucional: medicina
+general, odontología y psicología.  
+El sistema contempla la asignación de turnos desde tablets de autoservicio, control administrativo por parte del
+personal autorizado y seguimiento por parte de los profesionales de la salud.
 
 ---
 
@@ -12,7 +15,6 @@ El sistema contempla la asignación de turnos desde tablets de autoservicio, con
 - **Java 17**
 - **Spring Boot**
 - **PostgreSQL**
-- **Apache Kafka**
 - **Spring Cloud Bus**
 - **JWT (JSON Web Token)**
 - **Lombok**
@@ -25,46 +27,48 @@ El sistema contempla la asignación de turnos desde tablets de autoservicio, con
 
 ### 🔗 Interacción con Otros Módulos
 
-El módulo opera como un microservicio independiente, orquestado dentro de una arquitectura basada en microservicios y expuesto mediante un **API Gateway** que gestiona la autenticación y el enrutamiento de peticiones.
+El módulo opera como un microservicio independiente, orquestado dentro de una arquitectura basada en microservicios y
+expuesto mediante un **API Gateway** que gestiona la autenticación y el enrutamiento de peticiones.
 
 #### 🔄 Flujo General de Interacción:
 
 1. **Cliente (Web/Móvil)**: Envía solicitudes para turnos médicos al **API Gateway**.
 2. **API Gateway**:
-   - Obtiene un token JWT desde el **Auth Service**.
-   - Valida el token y enruta la petición al microservicio correspondiente.
+    - Obtiene un token JWT desde el **Auth Service**.
+    - Valida el token y enruta la petición al microservicio correspondiente.
 3. **Medical Shifts Service**:
-   - Verifica el usuario y sus roles a través del **Users Service**.
-   - Procesa la solicitud, registra la información en su base de datos y emite eventos al **Bus de Eventos**.
+    - Verifica el usuario y sus roles a través del **Users Service**.
+    - Procesa la solicitud, registra la información en su base de datos y emite eventos al **Bus de Eventos**.
 4. **Estadistics Service**:
-   - Consume los eventos generados para generar reportes históricos y estadísticas de atención.
+    - Consume los eventos generados para generar reportes históricos y estadísticas de atención.
 
 #### 🧩 Servicios Relacionados
 
 | Servicio                | Descripción                                            |
-| ----------------------- | ------------------------------------------------------ |
+|-------------------------|--------------------------------------------------------|
 | **Auth Service**        | Autenticación y emisión de tokens JWT                  |
 | **API Gateway**         | Enrutamiento y control de acceso                       |
 | **Users Service**       | Consulta y validación de usuarios                      |
 | **Estadistics Service** | Registro histórico y generación de reportes            |
 | **Event Bus**           | Middleware de eventos asincrónicos (Kafka + Cloud Bus) |
 
-
 #### 🔗 Diagrama de Microservicios
-![microservicios](<assets/imgs/Diagrama de Microservicios.png>)
 
+![microservicios](<assets/imgs/diagrams/microservices.png>)
 
 ### 🏗️ Estilo Arquitectónico
 
-[DOCUMENTO DE ARQUITECTURA BACKEND](<assets/docs/DOCUMENTO DE ARQUITECTURA BACKEND.pdf>)
+[DOCUMENTO DE ARQUITECTURA BACKEND](<assets/docs/Backend-architecture.pdf>)
 
 ### ⚙️ Funcionamiento Interno
 
-El **MOD-LLL-001: Módulo de Turnos Médicos** expone una API RESTful para gestionar la creación, consulta y modificación de turnos. Utiliza autenticación basada en JWT y eventos distribuidos para la comunicación entre servicios. Incluye integración con tablets para asignación física de turnos y módulos visuales para pantallas de atención.
+El **MOD-LLL-001: Módulo de Turnos Médicos** expone una API RESTful para gestionar la creación, consulta y modificación
+de turnos. Utiliza autenticación basada en JWT y eventos distribuidos para la comunicación entre servicios. Incluye
+integración con tablets para asignación física de turnos y módulos visuales para pantallas de atención.
 
 > 🔍 _Más detalles disponibles en el documento de análisis de requerimientos._
 
-[Análisis Requerimientos](<assets/docs/Análisis Requerimientos.pdf>)
+[Análisis Requerimientos](<assets/docs/Requirements-analysis.pdf>)
 
 ---
 
@@ -72,34 +76,176 @@ El **MOD-LLL-001: Módulo de Turnos Médicos** expone una API RESTful para gesti
 
 - [ ] Diagrama de Clases
 
-![Diagrama de Clases](<assets/imgs/Diagrama de Clases v2.jpg>)
+![Diagrama de Clases](<assets/imgs/diagrams/class.jpg>)
 
-Astha Diagrama de clases: [Astha Diagrama de clases](<assets/docs/diamante_medicalturns_service - Diagrama de clases.asta>)
+El diagrama de clases representa las principales entidades involucradas en la gestión de turnos en el contexto de
+bienestar universitario.  
+Cada clase encapsula atributos y relaciones específicas para reflejar el comportamiento y la estructura del sistema.
 
-- [ ] Diagrama de Componentes Generales
+### Clases Principales
 
-![Diagrama de Componentes](<assets/imgs/Diagrama de Componentes Generales.png>)
+### `User`
+
+- Representa a los usuarios que pueden solicitar turnos.
+- **Atributos**: `id`, `name`, `role`
+- **Relaciones**: Tiene una relación con la clase `Turn` como paciente.
+
+### `Doctor`
+
+- Representa a los profesionales encargados de atender turnos.
+- **Atributos**: `userId`, `speciality`
+- **Relaciones**: Se relaciona con un `User` y está asociado a una especialidad médica.
+
+### `Turn`
+
+- Contiene la información de los turnos asignados o solicitados.
+- **Atributos**: `id`, `code`, `date`, `levelAttention`, `priority`, `speciality`, `status`, `dateAttention`
+- **Asociaciones**:
+    - Un `Doctor` que atiende el turno.
+    - Un `User` que solicita el turno.
+
+### `UniversityWelfare`
+
+- Contiene configuraciones relacionadas con la disponibilidad de turnos.
+- **Atributos**: `id`, `disableTurns`, `disableTurnsBySpeciality` (lista de especialidades deshabilitadas)
+
+### `Multimedia`
+
+- Gestiona contenido informativo relacionado al servicio.
+- **Atributos**: `id`, `name`, `type`, `url`, `duration`
+
+### `SpecialitySequence`
+
+- Lleva el control de la numeración secuencial de turnos por especialidad.
+- **Atributos**: `id`, `speciality`, `sequence`
+
+Astha Diagrama de
+clases: [Astha Diagrama de clases](<assets/docs/Class-diagrams.asta>)
 
 - [ ] Diagrama de Componentes
 
-1. Turn Management Service
+![Diagrama de Componentes](<assets/imgs/diagrams/components.jpg>)
 
-![Turn Management Service](<assets/imgs/Diagrama de Componentes 1.png>)
-2. Multimedia Management Service  
+El siguiente diagrama de componentes permite evidenciar el flujo completo y la estructura funcional del sistema *
+*MedicalTurns**, abarcando desde la interfaz de usuario hasta la integración con servicios externos.
 
-![Multimedia Management Service](<assets/imgs/Diagrama de Componentes 2.png>)
-3. Report Service  
-   
-![Report Service](<assets/imgs/Diagrama de Componentes 3.png>)
+### Componentes Principales
+
+### `UniversityWelfareService`
+
+- Se encarga de la gestión de turnos, incluyendo su creación y actualización.
+
+### `ReportService`
+
+- Recopila y envía los datos necesarios para el análisis estadístico.
+- Esta información es procesada por el servicio externo `bismuto-statistics-service`, el cual genera las estadísticas
+  cuando son solicitadas.
+
+### `MultimediaService`
+
+- Administra los elementos multimedia del módulo, como imágenes y videos.
+- Se apoya en el `MultimediaController` para exponer estos recursos a través de la API.
 
 
 - [ ] Diagrama de Secuencia
 
-  > Aun por Definir
+[Diagramas de secuencia](<assets/docs/Sequence-Diagrams.pdf>)
+
+En esta sección se documentan los distintos **diagramas de secuencia** que describen la interacción entre componentes
+del sistema a lo largo del tiempo, específicamente en los flujos clave definidos para cada módulo funcional. Estos
+diagramas son fundamentales para visualizar cómo los distintos servicios, controladores y entidades colaboran para
+cumplir con los casos de uso definidos.
+
+### Organización de los Diagramas
+
+Los diagramas de secuencia están organizados en carpetas bajo el directorio `sequence-diagrams`, de acuerdo con los
+módulos funcionales y técnicos del sistema. La estructura sigue el patrón de **arquitectura de capas**:
+
+- `controller/`: contiene los diagramas centrados en las interacciones a nivel de API y controladores HTTP.
+- `service/`: contiene los diagramas que detallan la lógica de negocio y cómo los servicios internos del sistema
+  gestionan los procesos.
+
+Cada subcarpeta dentro de `controller` y `service` corresponde a un módulo específico del sistema:
+
+- `multimedia-controller` y `multimedia-service`  
+  Documentan los flujos relacionados con la carga, consulta y validación de archivos multimedia asociados a turnos
+  médicos o usuarios.
+
+- `report-controller`  
+  Contiene diagramas que representan la comunicación entre el sistema principal y el módulo externo de estadísticas y
+  reportes, así como la exposición de esos datos al usuario.
+
+- `university-welfare-controller` y `university-welfare-service`  
+  Representan las operaciones relacionadas con el bienestar universitario, incluyendo flujos de asistencia social o
+  seguimiento de estudiantes.
+
+- `turn-service`  
+  Incluye los diagramas para la gestión de turnos médicos, como la asignación, finalización (por asistencia o no
+  asistencia) y consulta de disponibilidad.
+
+---
+
+Estos diagramas permiten una comprensión clara del comportamiento del sistema en tiempo de ejecución y son una
+herramienta útil tanto para desarrolladores como para analistas funcionales.
 
 - [ ] Diagrama de Datos
-      
-![Diagrama de Datos](<assets/imgs/Diagrama de Datos v2.jpg>)
+
+![Diagrama de Datos](<assets/imgs/diagrams/data.png>)
+
+El sistema utiliza una base de datos relacional (**PostgreSQL**) cuyo modelo representa las entidades clave involucradas
+en la gestión de turnos dentro del contexto de bienestar universitario.
+
+A continuación, se describen las tablas principales y su propósito:
+
+### `app_user`
+
+Representa a los usuarios del sistema (como estudiantes o personal administrativo).  
+Aunque el sistema general cuenta con un módulo centralizado de autenticación, este microservicio almacena localmente la
+tabla `app_user` para evitar una dependencia directa, garantizando la **autonomía y resiliencia** del servicio, en
+conformidad con los principios de diseño de microservicios.
+
+### `doctor`
+
+Representa a los profesionales encargados de atender los turnos.  
+Está asociado directamente a un registro en `app_user` y contiene información adicional como la **especialidad médica**.
+
+### `turn`
+
+Registra los turnos solicitados por los usuarios, incluyendo atributos como:
+
+- Código
+- Fecha
+- Nivel de atención
+- Prioridad
+- Especialidad
+- Estado del turno
+
+Cada turno se asocia tanto a un usuario como a un doctor.
+
+### `university_welfare`
+
+Define la configuración general del servicio de bienestar universitario, incluyendo si los **turnos están habilitados o
+deshabilitados**.
+
+### `disable_turns_speciality`
+
+Relaciona las especialidades con los servicios de bienestar que tienen **turnos deshabilitados**.  
+Esta tabla permite representar múltiples especialidades deshabilitadas por instancia de bienestar, solventando la
+limitación de las bases de datos relacionales respecto al almacenamiento de listas.
+
+### `multimedia`
+
+Almacena contenido informativo como **videos o imágenes** relacionados con el servicio. Incluye atributos como:
+
+- Duración
+- Nombre
+- Tipo
+- URL
+
+### `speciality_sequence`
+
+Lleva un control de **numeración secuencial por especialidad**, lo que permite asignar un número de turno ordenado por
+tipo de atención médica.
 
 ---
 
@@ -107,27 +253,18 @@ Astha Diagrama de clases: [Astha Diagrama de clases](<assets/docs/diamante_medic
 
 ### 📡 Endpoints REST
 
-- [ ] Endpoints para bienestar universitario  
+Puedes consumir el API ya desplegado accediendo a su documentación en línea:
 
-![Diagrama de Datos](<assets/imgs/University welfare endpoints.png>)
+- **Swagger en Azure:**
 
-- [ ] Endpoints para contenido informativo  
-
-![Diagrama de Datos](<assets/imgs/Multimedia endpoints.png>)
-
-- [ ] Endpoints para reportes  
-  
-![Diagrama de Datos](<assets/imgs/Report endpoints.png>)
-
-Swagger: [Swagger UI](http://localhost:8080/swagger-ui.html)
-
-**📌 Nota:** Mas adelante se desplegara para que pueda ser accesible.
-
+```
+https://diamante-medicalturns-develop-dvb8c2cqfbh4gwbg.canadacentral-01.azurewebsites.net/swagger-ui/index.html
+```  
 
 ### 😊 Happy Path
 
 | Escenario                               | Resultado esperado                                                  |
-| --------------------------------------- | ------------------------------------------------------------------- |
+|-----------------------------------------|---------------------------------------------------------------------|
 | Crear un nuevo turno                    | Se registra el turno y se devuelve el turno creado                  |
 | Obtener lista de turnos disponibles     | Se devuelve una lista actualizada de turnos                         |
 | Eliminar un turno existente             | Se elimina correctamente y se confirma la operación                 |
@@ -149,7 +286,7 @@ Swagger: [Swagger UI](http://localhost:8080/swagger-ui.html)
 ### 🚨 Manejo de Errores
 
 | Código | Mensaje de error             | Causa probable                         |
-| ------ | ---------------------------- | -------------------------------------- |
+|--------|------------------------------|----------------------------------------|
 | 400    | "Datos de entrada inválidos" | Validaciones fallidas en el formulario |
 | 401    | "Usuario no autenticado"     | Token inválido o ausente               |
 | 404    | "Turnos no disponibles"      | Los turnos están deshabilitados        |
@@ -161,20 +298,37 @@ Swagger: [Swagger UI](http://localhost:8080/swagger-ui.html)
 ## 📬 Uso de Colas de Mensajería
 
 | Tópico Kafka | Evento Disparado | Resultado Esperado | Happy Path | Dead Letter Queue (DLQ) |
-| ------------ | ---------------- | ------------------ | ---------- | ----------------------- |
+|--------------|------------------|--------------------|------------|-------------------------|
 | x            | x                | x                  | x          | x                       |
 
 ---
 
 ## 🧪 Evidencia de Pruebas
 
+- Evidencia de cobertura:
+
+Como parte del aseguramiento de la calidad del software, se realizaron pruebas automatizadas enfocadas en validar el correcto funcionamiento de los componentes desarrollados. Para medir el alcance de dichas pruebas, se utilizó JaCoCo (Java Code Coverage), una herramienta que permite analizar qué porcentaje del código fuente ha sido ejecutado durante la ejecución de las pruebas.
+
+Además, se integró SonarQube para proporcionar un análisis más completo del estado del código, incluyendo métricas de cobertura, deuda técnica, duplicación de código y cumplimiento de buenas prácticas. Gracias a estas herramientas, se logró mantener una cobertura de pruebas superior al 90%, lo cual indica un alto nivel de validación automatizada sobre el código del sistema.
+
+Este nivel de cobertura no solo refleja un esfuerzo por garantizar la confiabilidad del software, sino que también facilita el mantenimiento futuro del proyecto al reducir la probabilidad de errores en funcionalidades ya implementadas.
+
+- Evidencia de cobertura JaCoCo:
+
+![alt text](assets/imgs/test/jacoco.jpg) 
+
+- Evidencia de cobertura SonarQube:
+
+![alt text](assets/imgs/test/sonar.jpg) 
+
 - Las pruebas están ubicadas en:  
   `src/test/java/eci/cvds/ecibeneficio/diamante_medicalturns_service`
 
 - Tecnologías utilizadas:
-  - **JUnit 5**
-  - **Mockito**
-  - **Spring Boot Test**
+    - **JUnit 5**
+    - **Mockito**
+    - **Spring Boot Test**
+    - **SonarQube**
 
 ### ▶️ Ejecutar pruebas:
 
@@ -214,28 +368,14 @@ http://localhost:8080/swagger-ui.html
 
 ---
 
-### ☁️ Usando el despliegue en Azure
-
-Puedes consumir el API ya desplegado accediendo a su documentación en línea:
-
-- **Swagger en Azure:**
-
-```
-https://back-medicalturns-develop-aycucpewbafjhce5.mexicocentral-01.azurewebsites.net/swagger-ui.html
-```
-
-Este endpoint se encuentra protegido por autenticación JWT, por lo que deberás obtener un token desde el **Auth Service** antes de realizar peticiones.
-
----
-
 ## 🚀 Evidencia de CI/CD y Despliegue
 
-- El proyecto se encuentra desplegado en Azure.
-- Acceso a la API mediante Swagger:  
-  👉 [Ver en Azure](https://back-medicalturns-develop-aycucpewbafjhce5.mexicocentral-01.azurewebsites.net/swagger-ui.html)
+- El proyecto se encuentra desplegado en Azure.  
+  👉 [Despliegue para pruebas](diamante-medicalturns-develop-dvb8c2cqfbh4gwbg.canadacentral-01.azurewebsites.net)  
+  👉 [Despliegue para produccion](diamante-medicalturns-dzdja4b4bfayaqdk.canadacentral-01.azurewebsites.net)
 - Pipelines configurados:
-  - GitHub Actions para pruebas y builds
-  - Azure Pipelines para despliegue automático
+    - GitHub Actions para pruebas y builds
+    - Azure Pipelines para despliegue automático
 
 ---
 

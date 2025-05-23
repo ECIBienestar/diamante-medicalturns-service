@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class CallTurnRequest {
-  private String doctorId;
   private Long turnId;
   private SpecialityEnum speciality;
   private int levelAttention;

@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponse {
-  private String id;
-  private String name;
-  private RoleEnum role;
+  String name;
+  String id;
+  RoleEnum role;
 }

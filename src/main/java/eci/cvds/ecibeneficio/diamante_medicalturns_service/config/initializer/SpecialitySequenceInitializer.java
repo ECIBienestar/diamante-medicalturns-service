@@ -18,10 +18,7 @@ public class SpecialitySequenceInitializer {
       specialitySequenceRepository
           .findById(speciality)
           .orElseGet(
-              () -> {
-                SpecialitySequence specialitySequence = new SpecialitySequence(speciality, 0);
-                return specialitySequenceRepository.save(specialitySequence);
-              });
+              () -> specialitySequenceRepository.save(new SpecialitySequence(speciality, 0)));
     }
   }
 }

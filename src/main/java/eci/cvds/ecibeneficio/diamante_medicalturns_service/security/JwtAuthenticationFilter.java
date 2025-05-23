@@ -28,7 +28,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       @NonNull FilterChain filterChain)
       throws ServletException, IOException {
     String token = getToken(request);
-
     if (token == null || !jwtService.isTokenValid(token)) {
       filterChain.doFilter(request, response);
       return;
@@ -40,7 +39,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     UsernamePasswordAuthenticationToken auth =
         new UsernamePasswordAuthenticationToken(
             email, null, List.of(new SimpleGrantedAuthority("ROLE_" + role.name())));
-
     auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
     SecurityContextHolder.getContext().setAuthentication(auth);
 
