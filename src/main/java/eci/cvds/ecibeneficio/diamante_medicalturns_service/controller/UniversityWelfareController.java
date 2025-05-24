@@ -308,6 +308,7 @@ public class UniversityWelfareController {
             description = "Error en el servidor",
             content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("isAuthenticated()")
   @GetMapping("/are-enabled")
   public ResponseEntity<ApiResponse<Boolean>> areTurnsEnabled() {
     return ResponseEntity.ok(ApiResponse.success("Turns enabled status",
@@ -327,6 +328,7 @@ public class UniversityWelfareController {
             description = "Error en el servidor",
             content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("isAuthenticated()")
   @GetMapping("/specialties-disabled")
   public ResponseEntity<ApiResponse<List<SpecialityEnum>>> getSpecialtiesDisabled () {
     return ResponseEntity.ok(ApiResponse.success("Disabled specialties",

@@ -2,7 +2,6 @@ package eci.cvds.ecibeneficio.diamante_medicalturns_service.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateMultimediaRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.MultimediaResponse;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.enums.TypeEnum;
