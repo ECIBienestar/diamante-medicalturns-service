@@ -1,10 +1,10 @@
 package eci.cvds.ecibeneficio.diamante_medicalturns_service.controller;
 
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateMultimediaRequest;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.ApiResponse;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.MultimediaResponse;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.MultimediaService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -24,15 +24,22 @@ public class MultimediaController {
       description = "Permite subir un archivo multimedia al sistema.")
   @ApiResponses(
       value = {
-        @ApiResponse(responseCode = "200", description = "Archivo multimedia subido correctamente"),
-        @ApiResponse(
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "Archivo multimedia subido correctamente"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "500",
             description = "Error interno del servidor al subir el archivo multimedia")
       })
   @PostMapping
-  public ResponseEntity<Void> uploadMultimedia(@RequestBody CreateMultimediaRequest request) {
-    multimediaService.createMultimedia(request);
-    return ResponseEntity.ok().build();
+  public ResponseEntity<ApiResponse<Void>> uploadMultimedia(
+      @ModelAttribute CreateMultimediaRequest request) {
+    try {
+      multimediaService.createMultimedia(request);
+      return ResponseEntity.ok(ApiResponse.success("Multimedia uploaded"));
+    } catch (Exception e) {
+      return ResponseEntity.internalServerError().body(ApiResponse.error(e.getMessage()));
+    }
   }
 
   @Operation(
@@ -40,15 +47,20 @@ public class MultimediaController {
       description = "Obtiene un archivo multimedia específico mediante su ID.")
   @ApiResponses(
       value = {
-        @ApiResponse(responseCode = "200", description = "Archivo multimedia encontrado"),
-        @ApiResponse(responseCode = "404", description = "Archivo multimedia no encontrado"),
-        @ApiResponse(
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "Archivo multimedia encontrado"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "404",
+            description = "Archivo multimedia no encontrado"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "500",
             description = "Error interno del servidor al obtener el archivo multimedia")
       })
   @GetMapping("/{id}")
-  public ResponseEntity<MultimediaResponse> getById(@PathVariable Long id) {
-    return ResponseEntity.ok(multimediaService.getMultimedia(id));
+  public ResponseEntity<ApiResponse<MultimediaResponse>> getById(@PathVariable Long id) {
+    return ResponseEntity.ok(
+        ApiResponse.success("Multimedia found", multimediaService.getMultimedia(id)));
   }
 
   @Operation(
@@ -56,15 +68,20 @@ public class MultimediaController {
       description = "Obtiene todos los archivos multimedia almacenados en el sistema.")
   @ApiResponses(
       value = {
-        @ApiResponse(responseCode = "200", description = "Lista de archivos multimedia"),
-        @ApiResponse(responseCode = "404", description = "No se encontraron archivos multimedia"),
-        @ApiResponse(
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "Lista de archivos multimedia"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "404",
+            description = "No se encontraron archivos multimedia"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "500",
             description = "Error interno del servidor al obtener los archivos multimedia")
       })
   @GetMapping
-  public ResponseEntity<List<MultimediaResponse>> getAll() {
-    return ResponseEntity.ok(multimediaService.getAllMultimedia());
+  public ResponseEntity<ApiResponse<List<MultimediaResponse>>> getAll() {
+    return ResponseEntity.ok(
+        ApiResponse.success("Multimedia found", multimediaService.getAllMultimedia()));
   }
 
   @Operation(
@@ -72,17 +89,19 @@ public class MultimediaController {
       description = "Permite eliminar un archivo multimedia del sistema mediante su ID.")
   @ApiResponses(
       value = {
-        @ApiResponse(
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "204",
             description = "Archivo multimedia eliminado correctamente"),
-        @ApiResponse(responseCode = "404", description = "Archivo multimedia no encontrado"),
-        @ApiResponse(
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "404",
+            description = "Archivo multimedia no encontrado"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "500",
             description = "Error interno del servidor al eliminar el archivo multimedia")
       })
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> delete(@PathVariable Long id) {
+  public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
     multimediaService.deleteMultimedia(id);
-    return ResponseEntity.noContent().build();
+    return ResponseEntity.ok(ApiResponse.success("Multimedia deleted"));
   }
 }
