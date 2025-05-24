@@ -1,12 +1,19 @@
 package eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request;
 
-import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.enums.TypeEnum;
-import lombok.Data;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.TypeEnum;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateMultimediaRequest {
-    private String name;
-    private String url;
-    private int duration;
-    private TypeEnum type;
+  private String name;
+  private MultipartFile file;
+  private int duration;
+  private TypeEnum type;
 }
