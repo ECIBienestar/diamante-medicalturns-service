@@ -61,7 +61,7 @@ The **MOD-LLL-001: Medical Shift Module** exposes a RESTful API for managing the
 
 > 🔍 _More details available in the requirements analysis document._
 
-[Requirements Analysis](<assets/docs/Requirements-analysis.pdf>)
+[Requirements Analysis](https://pruebacorreoescuelaingeduco-my.sharepoint.com/:w:/g/personal/carlos_barrero-v_mail_escuelaing_edu_co/EVjHuij2CCpHqRy6PnCIZLUBxCcG4ULBVNxOfr0nmDv_Gw?e=ZSCGES)
 
 ---
 
@@ -286,11 +286,11 @@ This level of coverage not only reflects an effort to ensure software reliabilit
 
 - JaCoCo Coverage Evidence:
 
-![alt text](assets/imgs/test/jacoco.jpg) 
+![alt text](assets/imgs/test/jacoco.png) 
 
 - SonarQube Coverage Evidence:
 
-![alt text](assets/imgs/test/sonar.jpg) 
+![alt text](assets/imgs/test/sonar.png) 
 
 - The tests are located at:  
   `src/test/java/eci/cvds/ecibeneficio/diamante_medicalturns_service`
