@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/multimedia")
+@PreAuthorize("hasAnyRole('MEDICAL_SECRETARY', 'ADMINISTRATOR')")
 @RequiredArgsConstructor
 @Tag(name = "Multimedia", description = "Operaciones sobre el contenido informativo ")
 public class MultimediaController {
@@ -32,7 +33,6 @@ public class MultimediaController {
             responseCode = "500",
             description = "Error interno del servidor al subir el archivo multimedia")
       })
-  @PreAuthorize("hasAnyRole('MEDICAL_SECRETARY', 'ADMINISTRATOR')")
   @PostMapping
   public ResponseEntity<ApiResponse<Void>> uploadMultimedia(
       @ModelAttribute CreateMultimediaRequest request) {
@@ -59,7 +59,6 @@ public class MultimediaController {
             responseCode = "500",
             description = "Error interno del servidor al obtener el archivo multimedia")
       })
-  @PreAuthorize("hasRole('MEDICAL_SECRETARY')")
   @GetMapping("/{id}")
   public ResponseEntity<ApiResponse<MultimediaResponse>> getById(@PathVariable Long id) {
     return ResponseEntity.ok(
@@ -81,7 +80,6 @@ public class MultimediaController {
             responseCode = "500",
             description = "Error interno del servidor al obtener los archivos multimedia")
       })
-  @PreAuthorize("hasRole('MEDICAL_SECRETARY')")
   @GetMapping
   public ResponseEntity<ApiResponse<List<MultimediaResponse>>> getAll() {
     return ResponseEntity.ok(
@@ -103,7 +101,6 @@ public class MultimediaController {
             responseCode = "500",
             description = "Error interno del servidor al eliminar el archivo multimedia")
       })
-  @PreAuthorize("hasAnyRole('MEDICAL_SECRETARY', 'ADMINISTRATOR')")
   @DeleteMapping("/{id}")
   public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
     multimediaService.deleteMultimedia(id);

@@ -62,7 +62,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
-  @PreAuthorize("hasRole('MEDICAL_SECRETARY')")
+  @PreAuthorize("hasAnyRole('MEDICAL_SECRETARY', 'ADMINISTRATOR')")
   @GetMapping()
   public ResponseEntity<ApiResponse<List<TurnResponse>>> getTurns() {
     return ResponseEntity.ok(
@@ -99,7 +99,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
-  @PreAuthorize("hasRole('MEDICAL_SECRETARY')")
+  @PreAuthorize("hasAnyRole('MEDICAL_SECRETARY', 'ADMINISTRATOR')")
   @GetMapping("/current-turn")
   public ResponseEntity<ApiResponse<TurnResponse>> getLastTurn() {
     Optional<TurnResponse> turn = universityWelfareService.getLastCurrentTurn();
