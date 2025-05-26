@@ -56,6 +56,9 @@ class UniversityWelfareControllerTest {
   @MockitoBean
   private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+  @MockitoBean
+  private JwtService jwtService;
+
   @BeforeEach
   void setup() throws Exception {
     doAnswer(invocation -> {
