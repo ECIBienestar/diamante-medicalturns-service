@@ -52,16 +52,16 @@ The module operates as an independent microservice, orchestrated within a micros
 
 ### 🏗️ Architectural Style
 
-You can consult the complete document [here](https://pruebacorreoescuelaingeduco-my.sharepoint.com/:w:/g/personal/daniel_dcamelo_mail_escuelaing_edu_co/ETpyb_BfbnxAsZGTGKw-IB4BxNGzTujCry-kpqriQQOVgA?e=fh9OXx).
+You can consult the complete document here [Backend Architecture](assets/docs/Backend-architecture-diamante.pdf).
 
 
-### ⚙️ Funcionamiento Interno
+### ⚙️ Internal Operations
 
 The **MOD-LLL-001: Medical Shift Module** exposes a RESTful API for managing the creation, viewing, and modification of appointments. It uses JWT-based authentication and distributed events for communication between services. It includes integration with tablets for physical appointment assignment and visual modules for service screens.
 
 > 🔍 _More details available in the requirements analysis document._
 
-[Requirements Analysis](<assets/docs/Requirements-analysis.pdf>)
+You can consult the complete document here [Requirements Analysis](assets/docs/Requeriments-analysis.pdf).
 
 ---
 
@@ -148,7 +148,19 @@ when requested.
 
 - [ ] Sequence Diagram
 
-[Sequence Diagram](<assets/docs/Sequence-Diagrams.pdf>)
+### Most Important Sequence Diagrams
+
+- [ ] Sequence Diagram
+
+UniversityWelfareServiceImpl_addTurn 
+
+![alt text](assets/imgs/sequence-diagrams/service/university-welfare-service/UniversityWelfareServiceImpl_addTurn.jpg)
+
+UniversityWelfareServiceImpl_callNextTurn 
+
+![alt text](assets/imgs/sequence-diagrams/service/university-welfare-service/UniversityWelfareServiceImpl_callNextTurn.jpg)
+
+- These two diagrams represent the most important functionalities within the shift module, which are adding a new shift and calling the next shift. The functionality of these is indicated in the diagram itself through arrows. The other diagrams are in the attached document of the Sequence Diagrams module.
 
 This section documents the various **sequence diagrams** that describe the interaction between system components over time, specifically in the key flows defined for each functional module. These diagrams are essential for visualizing how the various services, controllers, and entities collaborate to fulfill the defined use cases.
 
@@ -173,9 +185,13 @@ Represent operations related to university welfare, including social assistance 
 - `turn-service`
 Includes diagrams for managing medical shifts, such as assignment, completion (due to attendance or non-attendance), and availability queries.
 
+These diagrams provide a clear understanding of system behavior at runtime and are a useful tool for both developers and functional analysts.
+
+You can consult the complete document here [Sequence Diagrams](<assets/docs/Sequence Diagrams Diamante.pdf>).
+
 ---
 
-These diagrams provide a clear understanding of system behavior at runtime and are a useful tool for both developers and functional analysts.
+
 
 - [ ] Data Diagram
 
@@ -286,11 +302,11 @@ This level of coverage not only reflects an effort to ensure software reliabilit
 
 - JaCoCo Coverage Evidence:
 
-![alt text](assets/imgs/test/jacoco.jpg) 
+![alt text](assets/imgs/test/jacoco.png) 
 
 - SonarQube Coverage Evidence:
 
-![alt text](assets/imgs/test/sonar.jpg) 
+![alt text](assets/imgs/test/sonar.png) 
 
 - The tests are located at:  
   `src/test/java/eci/cvds/ecibeneficio/diamante_medicalturns_service`
