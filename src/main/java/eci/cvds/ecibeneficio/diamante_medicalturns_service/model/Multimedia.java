@@ -1,6 +1,6 @@
 package eci.cvds.ecibeneficio.diamante_medicalturns_service.model;
 
-import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.enums.TypeEnum;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.TypeEnum;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

@@ -4,6 +4,7 @@ import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CallTurnR
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateTurnRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.ApiResponse;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.TurnResponse;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Turn;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.UniversityWelfareService;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.SpecialityEnum;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +16,7 @@ import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -60,6 +62,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasAnyRole('MEDICAL_SECRETARY', 'ADMINISTRATOR')")
   @GetMapping()
   public ResponseEntity<ApiResponse<List<TurnResponse>>> getTurns() {
     return ResponseEntity.ok(
@@ -77,6 +80,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasRole('MEDICAL_STAFF')")
   @GetMapping("/{speciality}")
   public ResponseEntity<ApiResponse<List<TurnResponse>>> getTurns(
       @PathVariable SpecialityEnum speciality) {
@@ -95,6 +99,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasAnyRole('MEDICAL_SECRETARY', 'ADMINISTRATOR')")
   @GetMapping("/current-turn")
   public ResponseEntity<ApiResponse<TurnResponse>> getLastTurn() {
     Optional<TurnResponse> turn = universityWelfareService.getLastCurrentTurn();
@@ -119,6 +124,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasRole('MEDICAL_STAFF')")
   @GetMapping("/current-turn/{speciality}")
   public ResponseEntity<ApiResponse<TurnResponse>> getLastTurn(
       @PathVariable SpecialityEnum speciality) {
@@ -148,6 +154,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasRole('MEDICAL_STAFF')")
   @PostMapping("/call-next")
   public ResponseEntity<ApiResponse<TurnResponse>> callNextTurn(
       @RequestBody CallTurnRequest callNextTurn) {
@@ -173,6 +180,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasRole('MEDICAL_STAFF')")
   @PostMapping("/call")
   public ResponseEntity<ApiResponse<TurnResponse>> callTurn(
       @RequestBody CallTurnRequest callNextTurn) {
@@ -200,6 +208,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasRole('MEDICAL_STAFF')")
   @PostMapping("/skip")
   public ResponseEntity<ApiResponse<TurnResponse>> skipTurn(
       @RequestParam SpecialityEnum speciality) {
@@ -219,6 +228,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasAnyRole('MEDICAL_SECRETARY', 'ADMINISTRATOR')")
   @PostMapping("/enable")
   public ResponseEntity<ApiResponse<Void>> enableTurns() {
     universityWelfareService.enableTurns();
@@ -236,6 +246,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasAnyRole('MEDICAL_SECRETARY', 'ADMINISTRATOR')")
   @PostMapping("/disable")
   public ResponseEntity<ApiResponse<Void>> disableTurns() {
     universityWelfareService.disableTurns();
@@ -257,6 +268,7 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasAnyRole('MEDICAL_SECRETARY', 'ADMINISTRATOR')")
   @PostMapping("/enable/{speciality}")
   public ResponseEntity<ApiResponse<Void>> enableTurns(@PathVariable SpecialityEnum speciality) {
     universityWelfareService.enableTurns(speciality);
@@ -278,9 +290,51 @@ public class UniversityWelfareController {
         description = "Error en el servidor",
         content = @Content(mediaType = "application/json"))
   })
+  @PreAuthorize("hasAnyRole('MEDICAL_SECRETARY', 'ADMINISTRATOR')")
   @PostMapping("/disable/{speciality}")
   public ResponseEntity<ApiResponse<Void>> disableTurns(@PathVariable SpecialityEnum speciality) {
     universityWelfareService.disableTurns(speciality);
     return ResponseEntity.ok(ApiResponse.success("Turns disabled"));
   }
+
+  @Operation(summary = "Verifica el estado de habilitación de los turnos.")
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "Estado actual de habilitación actual de los turnos",
+            content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "500",
+            description = "Error en el servidor",
+            content = @Content(mediaType = "application/json"))
+  })
+  @PreAuthorize("isAuthenticated()")
+  @GetMapping("/are-enabled")
+  public ResponseEntity<ApiResponse<Boolean>> areTurnsEnabled() {
+    return ResponseEntity.ok(ApiResponse.success("Turns enabled status",
+            universityWelfareService.areTurnsEnabled()));
+  }
+
+
+
+  @Operation(summary = "Obtiene las especialidades cuyos turnos estan deshabilitados")
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "Especialidades cuyos turnos estan deshabilitados",
+            content = @Content(mediaType = "application/json")),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "500",
+            description = "Error en el servidor",
+            content = @Content(mediaType = "application/json"))
+  })
+  @PreAuthorize("isAuthenticated()")
+  @GetMapping("/specialties-disabled")
+  public ResponseEntity<ApiResponse<List<SpecialityEnum>>> getSpecialtiesDisabled () {
+    return ResponseEntity.ok(ApiResponse.success("Disabled specialties",
+            universityWelfareService.getSpecialtiesDisabled()));
+  }
+
+
+
 }

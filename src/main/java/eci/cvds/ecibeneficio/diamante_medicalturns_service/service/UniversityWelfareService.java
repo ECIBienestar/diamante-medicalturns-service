@@ -30,4 +30,8 @@ public interface UniversityWelfareService {
   void disableTurns(SpecialityEnum speciality);
 
   void enableTurns(SpecialityEnum speciality);
+
+  boolean areTurnsEnabled();
+
+  List<SpecialityEnum> getSpecialtiesDisabled();
 }

@@ -2,7 +2,6 @@ package eci.cvds.ecibeneficio.diamante_medicalturns_service.exception;
 
 public class MedicalTurnsException extends RuntimeException {
   // ─── User ───
-  public static final String USER_NOT_FOUND = "User not found";
   public static final String ERROR_CREATING_USER = "Failed to create user";
   public static final String USER_HAVE_TURN = "User have already a turn";
 
@@ -15,6 +14,9 @@ public class MedicalTurnsException extends RuntimeException {
   public static final String TURNS_ALREADY_DISABLED = "All turns are already disabled";
   public static final String LAST_TURN = "There are not more turns";
   public static final String TURN_COMPLETED = "Turn is already completed";
+
+  // ─── Multimedia ───
+  public static final String MULTIMEDIA_NOT_FOUND = "Multimedia not found";
 
   public MedicalTurnsException(String message) {
     super(message);

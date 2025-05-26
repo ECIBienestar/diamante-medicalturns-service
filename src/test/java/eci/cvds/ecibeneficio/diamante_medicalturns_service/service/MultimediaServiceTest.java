@@ -5,11 +5,12 @@ import static org.mockito.Mockito.*;
 
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.request.CreateMultimediaRequest;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.dto.response.MultimediaResponse;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.exception.MedicalTurnsException;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.Multimedia;
-import eci.cvds.ecibeneficio.diamante_medicalturns_service.model.enums.TypeEnum;
+import eci.cvds.ecibeneficio.diamante_medicalturns_service.utils.enums.TypeEnum;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.repository.MultimediaRepository;
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.service.impl.MultimediaServiceImpl;
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,80 +18,106 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 class MultimediaServiceTest {
-
   @Mock private MultimediaRepository multimediaRepository;
+  @Mock private WebClient webClient;
+  @Mock private WebClient.RequestBodyUriSpec requestBodyUriSpec;
+  @Mock private WebClient.RequestBodySpec requestBodySpec;
+  @Mock private WebClient.RequestHeadersUriSpec requestHeadersUriSpec;
+  @Mock private WebClient.RequestHeadersSpec requestHeadersSpec;
+  @Mock private WebClient.ResponseSpec responseSpec;
 
   @InjectMocks private MultimediaServiceImpl multimediaService;
+
+  Multimedia multimedia1;
+  Multimedia multimedia2;
 
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
+    multimediaService = new MultimediaServiceImpl(multimediaRepository, webClient);
+
+    multimedia1 = new Multimedia(TypeEnum.VIDEO, "Test", "url", 10);
+    multimedia2 = new Multimedia(TypeEnum.GIF, "Test", "url", 10);
   }
 
   @Test
-  void testCreateMultimedia() {
-    CreateMultimediaRequest request = new CreateMultimediaRequest();
-    request.setName("Video A");
-    request.setUrl("http://video.com/a");
-    request.setDuration(120);
-    request.setType(TypeEnum.VIDEO);
+  void testCreateMultimedia() throws IOException {
+    MockMultipartFile file =
+        new MockMultipartFile("file", "video.mp4", "video/mp4", "dummy content".getBytes());
+    CreateMultimediaRequest request =
+        new CreateMultimediaRequest("videoName", file, 110, TypeEnum.VIDEO);
 
-    Multimedia saved = new Multimedia(TypeEnum.VIDEO, "Video A", "http://video.com/a", 120);
+    when(webClient.put()).thenReturn(requestBodyUriSpec);
+    when(requestBodyUriSpec.uri(anyString())).thenReturn(requestBodySpec);
+    when(requestBodySpec.header(anyString(), anyString())).thenReturn(requestBodySpec);
+    when(requestBodySpec.bodyValue(any(ByteArrayResource.class))).thenReturn(requestHeadersSpec);
+    when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+    when(responseSpec.bodyToMono(String.class)).thenReturn(Mono.just("ok"));
 
-    when(multimediaRepository.save(any(Multimedia.class))).thenReturn(saved);
+    multimediaService.createMultimedia(request);
 
-    assertDoesNotThrow(() -> multimediaService.createMultimedia(request));
-    verify(multimediaRepository, times(1)).save(any(Multimedia.class));
+    verify(webClient).put();
+    verify(multimediaRepository).save(any(Multimedia.class));
   }
 
   @Test
-  void testGetMultimediaByIdFound() {
-    Multimedia multimedia = new Multimedia(TypeEnum.GIF, "GIF A", "http://gif.com/a", 10);
-    multimedia.setId(1L);
-
-    when(multimediaRepository.findById(1L)).thenReturn(Optional.of(multimedia));
+  void shouldGetMultimediaById() {
+    when(multimediaRepository.findById(1L)).thenReturn(Optional.of(multimedia1));
 
     MultimediaResponse response = multimediaService.getMultimedia(1L);
 
-    assertNotNull(response);
-    assertEquals("GIF A", response.getName());
-    assertEquals(TypeEnum.GIF, response.getType());
+    assertEquals(multimedia1.getName(), response.getName());
+    assertEquals(multimedia1.getType(), response.getType());
+    assertEquals(multimedia1.getUrl(), response.getUrl());
+    assertEquals(multimedia1.getDuration(), response.getDuration());
   }
 
   @Test
-  void testGetMultimediaByIdNotFound() {
-    when(multimediaRepository.findById(2L)).thenReturn(Optional.empty());
+  void shouldThrowExceptionWhenMultimediaNotFound() {
+    when(multimediaRepository.findById(1L)).thenReturn(Optional.empty());
 
-    assertThrows(RuntimeException.class, () -> multimediaService.getMultimedia(2L));
+    MedicalTurnsException exception =
+        assertThrows(MedicalTurnsException.class, () -> multimediaService.getMultimedia(1L));
+
+    assertEquals(MedicalTurnsException.MULTIMEDIA_NOT_FOUND, exception.getMessage());
   }
 
   @Test
-  void testGetAllMultimedia() {
-    Multimedia multimedia1 = new Multimedia(TypeEnum.VIDEO, "Video A", "url1", 100);
-    multimedia1.setId(1L);
+  void ShoulReturnAllMultimedia() {
+    List<Multimedia> list = List.of(multimedia1, multimedia2);
 
-    Multimedia multimedia2 = new Multimedia(TypeEnum.GIF, "GIF B", "url2", 5);
-    multimedia2.setId(2L);
+    when(multimediaRepository.findAll()).thenReturn(list);
 
-    List<Multimedia> entities = Arrays.asList(multimedia1, multimedia2);
+    List<MultimediaResponse> response = multimediaService.getAllMultimedia();
 
-    when(multimediaRepository.findAll()).thenReturn(entities);
+    assertEquals(list.size(), response.size());
 
-    List<MultimediaResponse> responses = multimediaService.getAllMultimedia();
+    for (int i = 0; i < list.size(); i++) {
+      Multimedia expected = list.get(i);
+      MultimediaResponse actual = response.get(i);
 
-    assertEquals(2, responses.size());
-    assertEquals("Video A", responses.get(0).getName());
-    assertEquals(TypeEnum.GIF, responses.get(1).getType());
+      assertEquals(expected.getName(), actual.getName());
+      assertEquals(expected.getType(), actual.getType());
+    }
   }
 
   @Test
   void testDeleteMultimedia() {
-    doNothing().when(multimediaRepository).deleteById(5L);
+    when(multimediaRepository.findById(1L)).thenReturn(java.util.Optional.of(multimedia1));
+    when(webClient.delete()).thenReturn(requestHeadersUriSpec);
+    when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
+    when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+    when(responseSpec.bodyToMono(Void.class)).thenReturn(Mono.empty());
 
-    multimediaService.deleteMultimedia(5L);
+    multimediaService.deleteMultimedia(1L);
 
-    verify(multimediaRepository, times(1)).deleteById(5L);
+    verify(webClient).delete();
+    verify(multimediaRepository).deleteById(1L);
   }
 }

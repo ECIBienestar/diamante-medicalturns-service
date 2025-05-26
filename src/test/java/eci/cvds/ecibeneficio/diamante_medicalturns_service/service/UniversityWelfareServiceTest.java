@@ -30,6 +30,10 @@ class UniversityWelfareServiceTest {
 
   @Mock private TurnService turnService; // El servicio TurnService que maneja la lógica de turnos
 
+  @Mock
+  private UniversityWelfare universityWelfare;
+
+
   @Mock private UniversityWelfareRepository universityWelfareRepository;
 
   @BeforeEach
@@ -74,13 +78,13 @@ class UniversityWelfareServiceTest {
     // Arrange
     SpecialityEnum speciality = SpecialityEnum.GENERAL_MEDICINE;
 
-    UniversityWelfare universityWelfare = new UniversityWelfare();
-    universityWelfare.disableTurns(speciality);
+    UniversityWelfare testUniversityWelfare  = new UniversityWelfare();
+    testUniversityWelfare .disableTurns(speciality);
 
     CreateTurnRequest request = new CreateTurnRequest();
     request.setSpeciality(speciality);
 
-    when(universityWelfareRepository.getUniversityWelfare()).thenReturn(universityWelfare);
+    when(universityWelfareRepository.getUniversityWelfare()).thenReturn(testUniversityWelfare);
 
     // Act & Assert
     MedicalTurnsException exception =
@@ -356,5 +360,31 @@ class UniversityWelfareServiceTest {
     assertEquals("ULTIMO", response.get().getCode());
     assertEquals(
         "John Doe", response.get().getUser().getName()); // Verificamos que no haya NullPointer
+  }
+
+  @Test
+  void shouldReturnTrueWhenTurnsAreEnabled() {
+    when(universityWelfareRepository.getUniversityWelfare()).thenReturn(universityWelfare);
+    when(universityWelfare.isDisableTurns()).thenReturn(false);
+    boolean result = universityWelfareService.areTurnsEnabled();
+
+    assertTrue(result);
+  }
+
+  @Test
+  void shouldReturnFalseWhenTurnsAreDisabled() {
+    when(universityWelfareRepository.getUniversityWelfare()).thenReturn(universityWelfare);
+    when(universityWelfare.isDisableTurns()).thenReturn(true);
+    boolean result = universityWelfareService.areTurnsEnabled();
+    assertFalse(result);
+  }
+
+  @Test
+  void shouldReturnDisabledSpecialties() {
+    List<SpecialityEnum> disabled = List.of(SpecialityEnum.DENTISTRY, SpecialityEnum.PSYCHOLOGY);
+    when(universityWelfareRepository.getUniversityWelfare()).thenReturn(universityWelfare);
+    when(universityWelfare.getDisbaleTurnsBySpeciality()).thenReturn(disabled);
+    List<SpecialityEnum> result = universityWelfareService.getSpecialtiesDisabled();
+    assertEquals(disabled, result);
   }
 }
