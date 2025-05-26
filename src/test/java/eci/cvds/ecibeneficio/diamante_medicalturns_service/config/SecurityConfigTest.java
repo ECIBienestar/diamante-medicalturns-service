@@ -2,13 +2,28 @@ package eci.cvds.ecibeneficio.diamante_medicalturns_service.config;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import eci.cvds.ecibeneficio.diamante_medicalturns_service.security.JwtAuthenticationFilter;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+@SpringBootTest
+@AutoConfigureMockMvc
 class SecurityConfigTest {
+  @Autowired private MockMvc mockMvc;
+
+  @Test
+  void shouldAllowAccessToSwaggerWithoutAuthentication() throws Exception {
+    mockMvc.perform(get("/swagger-ui/index.html")).andExpect(status().isOk());
+  }
+
   @Test
   void testCorsConfigurationSource() {
     JwtAuthenticationFilter filter = mock(JwtAuthenticationFilter.class);
